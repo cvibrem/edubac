@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+	<meta name="text-scale" content="scale" />
+	%sveltekit.head%
+</head>
+
+<body data-sveltekit-preload-data="hover">
+	<div style="display: contents">%sveltekit.body%</div>
+
+	<!-- Theme toggle: switch body background between surface and dark-surface -->
+	<button id="theme-toggle" aria-label="Toggle background color"
+		style="position:fixed;right:1rem;bottom:20rem;padding:.5rem .75rem;border-radius:6px;border:1px solid rgba(0,0,0,.08);background:var(--color-surface);color:inherit;z-index:9999">Dark</button>
+
+	<script>
+		(function () {
+			const btn = document.getElementById('theme-toggle');
+			if (!btn) return;
+			const rootStyles = getComputedStyle(document.documentElement);
+			const light = rootStyles.getPropertyValue('--color-surface').trim();
+			const dark = rootStyles.getPropertyValue('--dark-color-surface').trim();
+			const key = 'bg-dark';
+
+			function apply(isDark) {
+				document.body.style.backgroundColor = isDark ? (dark || '') : (light || '');
+				btn.textContent = isDark ? 'Light' : 'Dark';
+				localStorage.setItem(key, isDark ? '1' : '0');
+			}
+
+			btn.addEventListener('click', () => apply(localStorage.getItem(key) !== '1'));
+
+			// initialize from storage (if key missing, preserve existing background)
+			if (localStorage.getItem(key) === '1') apply(true);
+		})();
+	</script>
+</body>
+
+</html>

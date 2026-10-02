@@ -1,0 +1,19 @@
+{
+  "files.exclude": {
+    "android": true,
+    "node_modules": true,
+    ".svelte-kit": true,
+    "static": true,
+    "capacitor.config.ts": false,
+    "vite.config.ts": true,
+    "eslint.config.js": true,
+    "prettier.config.js": true,
+    "package.json": false,
+    "package-lock.json": true,
+    "tsconfig.json": true,
+    ".gitignore": true,
+    ".npmrc": true,
+    ".prettierignore": true,
+    "README.md": true,
+  }
+}
