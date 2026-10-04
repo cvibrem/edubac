@@ -19,7 +19,6 @@ export default defineConfig({
 		})
 	],
 	server: {
-		// Uncomment and add your host when serving dev through a reverse proxy:
-		// allowedHosts: ['dev.example.com']
+		allowedHosts: ['myvps.ismy.world']
 	}
 });

@@ -1,4 +1,4 @@
-package com.example.tabshell;
+package com.myriad.edubac;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

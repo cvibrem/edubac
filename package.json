@@ -1,5 +1,5 @@
 {
-	"name": "svelte-tab-shell",
+	"name": "edubac",
 	"private": true,
 	"version": "0.0.1",
 	"type": "module",
@@ -14,7 +14,7 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"deploy:usb": "npm run build && npx cap sync android && cd android && sh gradlew assembleDebug && adb install -r app/build/outputs/apk/debug/app-debug.apk",
-		"deploy:usb:launch": "adb shell monkey -p com.example.tabshell -c android.intent.category.LAUNCHER 1"
+		"deploy:usb:launch": "adb shell monkey -p com.myriad.edubac -c android.intent.category.LAUNCHER 1"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
