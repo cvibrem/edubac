@@ -15,7 +15,7 @@
 		parentRoot,
 		children
 	}: {
-		routes: string[];
+		routes: readonly string[];
 		parentRoot?: TabName;
 		children: import('svelte').Snippet;
 	} = $props();

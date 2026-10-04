@@ -1,19 +1,23 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { resolve } from '$app/paths';
 	import { goBack } from '$lib/core/navigation/back';
 	import { asResolved } from '$lib/core/navigation/paths';
 	import { switchInnerTab } from '$lib/core/navigation/state.svelte';
+	import { HOME_DETAIL_HREFS } from '$lib/config/tabs';
 	import SwipeZone from '$lib/core/shell/SwipeZone.svelte';
 
 	let { children } = $props();
 
-	const innerTabs = [
-		{ label: 'Overview', href: resolve('/home/innerPage') },
-		{ label: 'Details', href: resolve('/home/innerPage/details') },
-		{ label: 'Activity', href: resolve('/home/innerPage/activity') }
-	];
-	const innerHrefs = ['/home/innerPage', '/home/innerPage/details', '/home/innerPage/activity'];
+	const LABEL: Record<string, string> = {
+		'/home/innerPage': 'Overview',
+		'/home/innerPage/details': 'Details',
+		'/home/innerPage/activity': 'Activity'
+	};
+	const innerTabs = HOME_DETAIL_HREFS.map((href) => ({
+		label: LABEL[href] ?? href,
+		href: asResolved(href)
+	}));
+	const innerHrefs = HOME_DETAIL_HREFS;
 
 	function selectInner(e: MouseEvent, href: string) {
 		if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;

@@ -1,4 +1,4 @@
-import { TAB_HREF, TAB_ORDER } from '$lib/config/tabs';
+import { MAIN_TAB_HREFS, TAB_HREF, TAB_ORDER } from '$lib/config/tabs';
 import { tabRootOf } from './helpers';
 import { goto } from '$app/navigation';
 import { resolve } from '$app/paths';
@@ -129,15 +129,36 @@ export const tabHistory = new TabHistory();
 export const sessionDepth = new SessionDepth();
 
 /**
- * Single owner for programmatic tab switches (bottom bar taps, swipes).
- * Same tab: no-op at root, else pop drill back to root (Pattern B).
- * Different tab: pop to its root href if visited, else push.
+ * The single pop-or-push core for every tab group, outer or inner.
+ * Revisit pops to the existing entry instead of stacking duplicates,
+ * so back walks each screen exactly once.
+ */
+export function switchInGroup(
+	routes: readonly string[],
+	targetHref: string,
+	currentPath: string
+): void {
+	if (currentPath === targetHref) return;
+	if (!routes.includes(targetHref)) return;
+	if (tabHistory.inFlight || throttled()) return;
+	const steps = tabHistory.stepsToHref(targetHref);
+	if (steps > 0) {
+		tabHistory.inFlight = true;
+		window.history.go(-steps);
+	} else {
+		// Cast: resolve() is string-based at runtime; the literal union is compile-time only.
+		goto(resolve(targetHref as '/home/innerPage'));
+	}
+}
+
+/**
+ * Main tabs: same-tab drill pops back to root (Pattern B),
+ * everything else delegates to the shared group core.
  */
 export function switchTab(target: TabName, currentPath: string): void {
-	if (tabHistory.inFlight || throttled()) return;
 	const href = TAB_HREF[target];
-	if (tabRootOf(currentPath) === target) {
-		if (currentPath === href) return;
+	if (tabRootOf(currentPath) === target && currentPath !== href) {
+		if (tabHistory.inFlight || throttled()) return;
 		const steps = tabHistory.stepsToRoot();
 		if (steps > 0) {
 			tabHistory.inFlight = true;
@@ -147,31 +168,16 @@ export function switchTab(target: TabName, currentPath: string): void {
 		}
 		return;
 	}
-	const steps = tabHistory.stepsToHref(href);
-	if (steps > 0) {
-		tabHistory.inFlight = true;
-		window.history.go(-steps);
-	} else {
-		goto(resolve(href));
-	}
+	switchInGroup(MAIN_TAB_HREFS, href, currentPath);
 }
 
-/**
- * Same pop-or-push for inner tab bars/zones: revisit pops to the existing
- * entry instead of stacking duplicates, so back walks each screen once.
- */
-export function switchInnerTab(routes: string[], targetHref: string, currentPath: string): void {
-	if (tabHistory.inFlight || throttled()) return;
-	if (currentPath === targetHref) return;
-	if (!routes.includes(targetHref)) return;
-	const steps = tabHistory.stepsToHref(targetHref);
-	if (steps > 0) {
-		tabHistory.inFlight = true;
-		window.history.go(-steps);
-	} else {
-		// Cast: resolve() is string-based at runtime; the literal union is compile-time only.
-		goto(resolve(targetHref as '/home/innerPage'));
-	}
+/** Inner tab bars/zones: same shared core, no extra rules. */
+export function switchInnerTab(
+	routes: readonly string[],
+	targetHref: string,
+	currentPath: string
+): void {
+	switchInGroup(routes, targetHref, currentPath);
 }
 
 let lastProgrammaticNav = 0;
