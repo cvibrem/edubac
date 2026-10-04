@@ -21,5 +21,9 @@
 		position: absolute;
 		inset: 0;
 		overflow-y: auto;
+		/* Horizontal drags must reach the tab viewport as pointer events
+		   (for swipe navigation) instead of being swallowed by the
+		   scroller — vertical scroll still works natively. */
+		touch-action: pan-y;
 	}
 </style>
