@@ -1,34 +1,39 @@
 :root {
-    --color-splash-bg: #4f46e5;
-    --color-surface: #ffffff;
-    --color-accent: #4f46e5;
-    --dark-color-surface: #141414;
+	--color-splash-bg: #4f46e5;
+	--color-surface: #ffffff;
+	--color-accent: #4f46e5;
+	--dark-color-surface: #141414;
+
+	/* F7 normally sets these via its <App> JS — we run routeless, so set them here.
+       Active iOS tab color resolves through --f7-theme-color. */
+	--f7-theme-color: var(--color-accent);
+	--f7-theme-color-rgb: 79, 70, 229;
 }
 
 html,
 body {
-    margin: 0;
-    height: 100%;
-    overflow: hidden;
-    /* the app shell owns scrolling, not the document */
+	margin: 0;
+	height: 100%;
+	overflow: hidden;
+	/* the app shell owns scrolling, not the document */
 
-    background-color: var(--color-surface);
+	background-color: var(--color-surface);
 }
 
 #svelte,
 .app-shell {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
 }
 
 .tab-viewport {
-    position: relative;
-    flex: 1;
-    overflow: hidden;
+	position: relative;
+	flex: 1;
+	overflow: hidden;
 }
 
 .tab-page {
-    position: absolute;
-    inset: 0;
+	position: absolute;
+	inset: 0;
 }
