@@ -4,6 +4,8 @@
 	import { onMount } from 'svelte';
 
 	import Splash from '$lib/core/shell/Splash.svelte';
+	import 'framework7/css/bundle';
+	import 'framework7-icons/css/framework7-icons.css';
 	import '../app.css';
 
 	import { afterNavigate, onNavigate } from '$app/navigation';
@@ -13,6 +15,9 @@
 	const CustomSplash = registerPlugin<{ hide: () => Promise<void> }>('CustomSplash');
 
 	onMount(async () => {
+		// F7 theme class (normally set by F7's <App>; we stay routeless so set it here).
+		document.documentElement.classList.add(Capacitor.getPlatform() === 'android' ? 'md' : 'ios');
+
 		// Seed once: afterNavigate alone misses the initial `enter` navigation
 		// that mounts this layout (incl. `/` -> `/home` redirect).
 		tabHistory.seed(page.url.pathname);
