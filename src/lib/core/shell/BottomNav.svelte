@@ -48,7 +48,7 @@
 		<a
 			href={tab.href}
 			onclick={(e) => selectTab(e, tab)}
-			class="nav-item"
+			class="nav-item ripple"
 			class:active={page.url.pathname.startsWith(tab.href)}
 		>
 			<span class="icon">{tab.icon}</span>

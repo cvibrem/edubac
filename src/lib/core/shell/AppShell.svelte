@@ -6,12 +6,14 @@
 	import { navDirection, switchTab, tabHistory } from '$lib/core/navigation/state.svelte';
 	import { adjacentTab, SWIPE_MAX_Y, SWIPE_MIN_X, tabRootOf } from '$lib/core/navigation/helpers';
 	import { TAB_ORDER } from '$lib/config/tabs';
+	import { initRipple } from '$lib/core/shell/ripple';
 	import BottomNav from './BottomNav.svelte';
 
 	let { children } = $props();
 
 	onMount(() => {
 		navDirection.seed(page.url.pathname);
+		return initRipple();
 	});
 
 	onNavigate((navigation) => {

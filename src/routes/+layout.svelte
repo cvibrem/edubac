@@ -5,6 +5,7 @@
 
 	import Splash from '$lib/core/shell/Splash.svelte';
 	import '../app.css';
+	import '$lib/core/shell/ripple.css';
 
 	import { afterNavigate, onNavigate } from '$app/navigation';
 	import { page } from '$app/state';

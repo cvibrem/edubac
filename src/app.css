@@ -35,3 +35,47 @@ body {
 	position: absolute;
 	inset: 0;
 }
+
+/* ---- Native-app hardening: kill the web giveaways ---- */
+* {
+	-webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+	/* No pull-to-refresh or rubber-band chaining on the document. */
+	overscroll-behavior: none;
+	/* No text selection or long-press callout on app chrome. */
+	-webkit-user-select: none;
+	user-select: none;
+	-webkit-touch-callout: none;
+	/* No automatic font inflation. */
+	-webkit-text-size-adjust: 100%;
+	text-size-adjust: 100%;
+}
+
+/* Re-enable selection where the user edits text. */
+input,
+textarea,
+select,
+[contenteditable] {
+	-webkit-user-select: text;
+	user-select: text;
+	-webkit-touch-callout: default;
+}
+
+img {
+	-webkit-user-drag: none;
+}
+
+/* No 300ms tap delay, no double-tap zoom — scroll and pinch still work. */
+a,
+button,
+[role='button'] {
+	touch-action: manipulation;
+}
+
+/* Inner scrollers absorb overscroll instead of chaining it. */
+.stack-page {
+	overscroll-behavior: contain;
+}

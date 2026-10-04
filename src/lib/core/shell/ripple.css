@@ -1,0 +1,79 @@
+/* F7 Material touch-ripple, cloned timings and colors. */
+:root {
+	--ripple-black: rgba(0, 0, 0, 0.1);
+	--ripple-white: rgba(255, 255, 255, 0.15);
+	--ripple-color: var(--ripple-black);
+}
+
+/* Pressable host: clips the wave, stacks it above our background
+   but below our content. */
+.ripple {
+	position: relative;
+	overflow: hidden;
+	isolation: isolate;
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+/* Use on dark backgrounds. */
+.ripple-light {
+	--ripple-color: var(--ripple-white);
+}
+
+.ripple-wave {
+	left: 0;
+	top: 0;
+	position: absolute !important;
+	border-radius: 50%;
+	pointer-events: none;
+	z-index: -1;
+	padding: 0;
+	margin: 0;
+	font-size: 0;
+	transform: translate3d(0px, 0px, 0) scale(0);
+	background-color: var(--ripple-color);
+	animation: ripple-in 200ms forwards;
+}
+
+.ripple-wave-out {
+	transform: var(--ripple-transform);
+	animation: ripple-out 250ms forwards !important;
+}
+
+/* Solid buttons get the blurred glow variant (F7 button recipe). */
+button .ripple-wave {
+	animation: ripple-in-blurred 250ms forwards;
+	background-image: radial-gradient(
+		closest-side circle at 50% 50%,
+		var(--ripple-color) 50%,
+		rgba(255, 255, 255, 0)
+	);
+	background-color: transparent;
+}
+
+@keyframes ripple-in {
+	from {
+		transform: translate3d(0px, 0px, 0) scale(0);
+	}
+	to {
+		transform: var(--ripple-transform);
+	}
+}
+
+@keyframes ripple-in-blurred {
+	from {
+		transform: translate3d(0px, 0px, 0) scale(0.5);
+	}
+	to {
+		transform: var(--ripple-transform);
+	}
+}
+
+@keyframes ripple-out {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
+}

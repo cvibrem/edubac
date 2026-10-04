@@ -6,7 +6,9 @@
 <div class="demo-page" style="background:#334155;">
 	<h1>Login</h1>
 	<p>Sibling group (no tab bar) · slate</p>
-	<button type="button" onclick={() => goBack(asResolved('/home'))}>← Back</button>
+	<button type="button" class="ripple ripple-light" onclick={() => goBack(asResolved('/home'))}
+		>← Back</button
+	>
 </div>
 
 <style>

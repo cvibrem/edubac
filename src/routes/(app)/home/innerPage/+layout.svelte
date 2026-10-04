@@ -28,7 +28,11 @@
 
 <SwipeZone routes={innerHrefs} parentRoot="home">
 	<div class="inner-header">
-		<button type="button" class="back-btn" onclick={() => goBack(asResolved('/home'))}>←</button>
+		<button
+			type="button"
+			class="back-btn ripple ripple-light"
+			onclick={() => goBack(asResolved('/home'))}>←</button
+		>
 		<span class="inner-title">Home detail</span>
 	</div>
 	<nav class="inner-tabs">
@@ -37,7 +41,7 @@
 			<a
 				href={t.href}
 				onclick={(e) => selectInner(e, t.href)}
-				class="inner-tab"
+				class="inner-tab ripple ripple-light"
 				class:active={page.url.pathname === t.href}
 			>
 				{t.label}
