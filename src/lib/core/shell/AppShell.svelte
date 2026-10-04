@@ -2,7 +2,7 @@
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
 	import { onNavigate } from '$app/navigation';
-	import { quintOut } from 'svelte/easing';
+	import { f7MdForward } from '$lib/core/shell/easing';
 	import { navDirection, switchTab, tabHistory } from '$lib/core/navigation/state.svelte';
 	import { adjacentTab, SWIPE_MAX_Y, SWIPE_MIN_X, tabRootOf } from '$lib/core/navigation/helpers';
 	import { TAB_ORDER } from '$lib/config/tabs';
@@ -54,7 +54,7 @@
 	function slideIn(_node: HTMLElement, { direction = 1, duration = 240 } = {}) {
 		return {
 			duration,
-			easing: quintOut,
+			easing: f7MdForward,
 			css: (t: number) => `transform: translateX(${(1 - t) * 100 * direction}%)`
 		};
 	}
@@ -64,7 +64,7 @@
 	function slideOut(_node: HTMLElement, { direction = 1, duration = 240 } = {}) {
 		return {
 			duration,
-			easing: quintOut,
+			easing: f7MdForward,
 			css: (t: number) => `transform: translateX(${(1 - t) * -100 * direction}%)`
 		};
 	}
