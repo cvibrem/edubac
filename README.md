@@ -1,12 +1,9 @@
-# sveltekit-capacitor-tab-starter
+# svelte-tab-shell
 
 A reusable Svelte frontend base: **SvelteKit 2 + Svelte 5 (runes) + Capacitor**, with a
 native-style **tab router** (bottom tab bar, drill-in stacks, Android back-button support)
 that behaves the same on web and in the native shell. Ships with a color-coded demo
 (4 tabs + inner tabs + sibling login page) so you can see every transition immediately.
-
-Suggested GitHub name: `sveltekit-capacitor-tab-starter`
-(short alternatives: `sv-cap-tabs`, `svelte-tab-shell`).
 
 ## Stack
 
