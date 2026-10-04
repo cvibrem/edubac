@@ -3,6 +3,7 @@
 	import { resolve } from '$app/paths';
 	import { goBack } from '$lib/core/navigation/back';
 	import { asResolved } from '$lib/core/navigation/paths';
+	import SwipeZone from '$lib/core/shell/SwipeZone.svelte';
 
 	let { children } = $props();
 
@@ -11,9 +12,10 @@
 		{ label: 'Details', href: resolve('/home/innerPage/details') },
 		{ label: 'Activity', href: resolve('/home/innerPage/activity') }
 	];
+	const innerHrefs = ['/home/innerPage', '/home/innerPage/details', '/home/innerPage/activity'];
 </script>
 
-<div class="inner-wrap">
+<SwipeZone routes={innerHrefs} parentRoot="home">
 	<div class="inner-header">
 		<button type="button" class="back-btn" onclick={() => goBack(asResolved('/home'))}>←</button>
 		<span class="inner-title">Home detail</span>
@@ -28,14 +30,9 @@
 	<div class="inner-body">
 		{@render children()}
 	</div>
-</div>
+</SwipeZone>
 
 <style>
-	.inner-wrap {
-		min-height: 100%;
-		display: flex;
-		flex-direction: column;
-	}
 	.inner-header {
 		display: flex;
 		align-items: center;

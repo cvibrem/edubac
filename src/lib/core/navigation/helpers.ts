@@ -15,3 +15,7 @@ export function adjacentTab(root: TabName | undefined, dir: 1 | -1): TabName | u
 	const next = TAB_ORDER.indexOf(root) + dir;
 	return next < 0 || next >= TAB_ORDER.length ? undefined : TAB_ORDER[next];
 }
+
+/** Shared swipe thresholds (px). Mostly-horizontal drags switch, the rest is ignored. */
+export const SWIPE_MIN_X = 64;
+export const SWIPE_MAX_Y = 80;

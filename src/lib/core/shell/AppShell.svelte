@@ -4,7 +4,7 @@
 	import { onNavigate } from '$app/navigation';
 	import { quintOut } from 'svelte/easing';
 	import { navDirection, switchTab, tabHistory } from '$lib/core/navigation/state.svelte';
-	import { adjacentTab, tabRootOf } from '$lib/core/navigation/helpers';
+	import { adjacentTab, SWIPE_MAX_Y, SWIPE_MIN_X, tabRootOf } from '$lib/core/navigation/helpers';
 	import { TAB_ORDER } from '$lib/config/tabs';
 	import BottomNav from './BottomNav.svelte';
 
@@ -22,13 +22,17 @@
 
 	// Swipe between tabs (release-to-navigate; the slide plays on release).
 	// Vertical scrolling is untouched — only mostly-horizontal drags switch tabs.
-	const SWIPE_MIN_X = 64;
-	const SWIPE_MAX_Y = 80;
+	// Gestures starting inside a nested [data-swipe-zone] belong to it.
 	let swipeStart: { x: number; y: number; id: number } | null = null;
+
+	function insideInnerZone(e: PointerEvent): boolean {
+		return !!(e.target as HTMLElement | null)?.closest?.('[data-swipe-zone]');
+	}
 
 	function onPointerDown(e: PointerEvent) {
 		if (!e.isPrimary) return;
 		if (e.pointerType === 'mouse' && e.button !== 0) return;
+		if (insideInnerZone(e)) return;
 		swipeStart = { x: e.clientX, y: e.clientY, id: e.pointerId };
 	}
 
