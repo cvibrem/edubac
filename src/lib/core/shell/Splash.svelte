@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
 
-	let { onFinished, minDuration = 1200 } : { onFinished: () => void; minDuration?: number } = $props();
+	let { onFinished, minDuration = 1200 }: { onFinished: () => void; minDuration?: number } =
+		$props();
 
 	$effect(() => {
 		const timer = setTimeout(() => onFinished(), minDuration);

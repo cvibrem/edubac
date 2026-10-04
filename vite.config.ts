@@ -7,11 +7,19 @@ export default defineConfig({
 		sveltekit({
 			compilerOptions: {
 				// Force runes mode for the project, except for libraries. Can be removed in svelte 6.
-				runes: ({ filename }) => filename.split(/[/\\]/).includes('node_modules') ? undefined : true
+				runes: ({ filename }) =>
+					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
-			adapter: adapter(/*{
+			adapter:
+				adapter(
+					/*{
 				fallback: 'index.html'
-			}*/)
+			}*/
+				)
 		})
-	]
+	],
+	server: {
+		// Uncomment and add your host when serving dev through a reverse proxy:
+		// allowedHosts: ['dev.example.com']
+	}
 });

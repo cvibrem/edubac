@@ -1,9 +1,10 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.myriad.edubac',
-  appName: 'EduBac',
-  webDir: 'build'
+	// TODO: replace with your own id + name for each new project.
+	appId: 'com.example.tabshell',
+	appName: 'TabShell',
+	webDir: 'build'
 };
 
 export default config;

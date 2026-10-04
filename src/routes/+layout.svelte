@@ -3,15 +3,21 @@
 	import { App } from '@capacitor/app';
 	import { onMount } from 'svelte';
 
-	import Splash from '$lib/components/Splash.svelte';
+	import Splash from '$lib/core/shell/Splash.svelte';
 	import '../app.css';
 
-	import { afterNavigate } from '$app/navigation';
-	import { sessionDepth } from '$lib/stores/navigation.svelte';
+	import { afterNavigate, onNavigate } from '$app/navigation';
+	import { page } from '$app/state';
+	import { navDirection, tabHistory } from '$lib/core/navigation/state.svelte';
 
 	const CustomSplash = registerPlugin<{ hide: () => Promise<void> }>('CustomSplash');
 
 	onMount(async () => {
+		// Seed once: afterNavigate alone misses the initial `enter` navigation
+		// that mounts this layout (incl. `/` -> `/home` redirect).
+		tabHistory.seed(page.url.pathname);
+		navDirection.seed(page.url.pathname);
+
 		if (Capacitor.isNativePlatform()) {
 			setTimeout(async () => {
 				try {
@@ -43,8 +49,17 @@
 		};
 	});
 
+	// Global nav mirror: single owner (works for tab + non-tab routes).
+	// Tabs layout only handles slide direction.
+	onNavigate(() => {
+		tabHistory.inFlight = true;
+	});
+
 	afterNavigate((navigation) => {
-		sessionDepth.track(navigation.type);
+		tabHistory.handleAfterNavigate({
+			type: navigation.type,
+			toPath: navigation.to?.url?.pathname ?? page.url.pathname
+		});
 	});
 </script>
 

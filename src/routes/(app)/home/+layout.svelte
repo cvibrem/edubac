@@ -1,5 +1,5 @@
 <script lang="ts">
-	import StackTransition from '$lib/components/StackTransition.svelte';
+	import StackTransition from '$lib/core/shell/StackTransition.svelte';
 	let { children } = $props();
 </script>
 
