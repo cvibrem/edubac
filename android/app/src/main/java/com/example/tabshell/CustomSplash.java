@@ -1,4 +1,4 @@
-package com.myriad.edubac;
+package com.example.tabshell;
 
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
