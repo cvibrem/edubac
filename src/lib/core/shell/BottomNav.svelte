@@ -13,12 +13,11 @@
 		notifications: 'Alerts',
 		profile: 'Profile'
 	};
-	// framework7-icons glyph names (font ligatures).
 	const ICON: Record<TabName, string> = {
-		home: 'house_fill',
-		search: 'search',
-		notifications: 'bell_fill',
-		profile: 'person_fill'
+		home: '🏠',
+		search: '🔍',
+		notifications: '🔔',
+		profile: '👤'
 	};
 
 	const tabs: { name: TabName; href: ResolvedPath; label: string; icon: string }[] = TABS.map(
@@ -72,21 +71,47 @@
 	}
 </script>
 
-<!-- F7 Toolbar/Tabbar markup (CSS only — no F7 router/Views involved). -->
-<!-- eslint-disable svelte/no-navigation-without-resolve -- hrefs are pre-resolved via asResolved() -->
-<div class="toolbar tabbar toolbar-bottom">
-	<div class="toolbar-inner">
-		{#each tabs as tab (tab.name)}
-			<a
-				href={tab.href}
-				onclick={(e) => selectTab(e, tab)}
-				class="tab-link"
-				class:tab-link-active={page.url.pathname.startsWith(tab.href)}
-			>
-				<i class="icon f7-icons">{tab.icon}</i>
-				<span class="tabbar-label">{tab.label}</span>
-			</a>
-		{/each}
-	</div>
-</div>
-<!-- eslint-enable svelte/no-navigation-without-resolve -->
+<nav class="bottom-nav">
+	<!-- eslint-disable svelte/no-navigation-without-resolve -- hrefs are pre-resolved via asResolved() -->
+	{#each tabs as tab (tab.name)}
+		<a
+			href={tab.href}
+			onclick={(e) => selectTab(e, tab)}
+			class="nav-item"
+			class:active={page.url.pathname.startsWith(tab.href)}
+		>
+			<span class="icon">{tab.icon}</span>
+			<span class="label">{tab.label}</span>
+		</a>
+	{/each}
+	<!-- eslint-enable svelte/no-navigation-without-resolve -->
+</nav>
+
+<style>
+	.bottom-nav {
+		display: flex;
+		justify-content: space-around;
+		align-items: center;
+		background: transparent;
+		/* background: var(--color-surface); */
+		border-top: 1px solid rgba(0, 0, 0, 0.08);
+		padding-top: 0.5rem;
+		padding-bottom: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
+	}
+	.nav-item {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 2px;
+		font-size: 0.7rem;
+		color: #888;
+		text-decoration: none;
+		padding: 0.25rem 0.75rem;
+	}
+	.nav-item.active {
+		color: var(--color-accent);
+	}
+	.icon {
+		font-size: 1.25rem;
+	}
+</style>
