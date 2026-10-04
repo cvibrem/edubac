@@ -134,7 +134,7 @@ export const sessionDepth = new SessionDepth();
  * Different tab: pop to its root href if visited, else push.
  */
 export function switchTab(target: TabName, currentPath: string): void {
-	if (tabHistory.inFlight) return;
+	if (tabHistory.inFlight || throttled()) return;
 	const href = TAB_HREF[target];
 	if (tabRootOf(currentPath) === target) {
 		if (currentPath === href) return;
@@ -154,4 +154,31 @@ export function switchTab(target: TabName, currentPath: string): void {
 	} else {
 		goto(resolve(href));
 	}
+}
+
+/**
+ * Same pop-or-push for inner tab bars/zones: revisit pops to the existing
+ * entry instead of stacking duplicates, so back walks each screen once.
+ */
+export function switchInnerTab(routes: string[], targetHref: string, currentPath: string): void {
+	if (tabHistory.inFlight || throttled()) return;
+	if (currentPath === targetHref) return;
+	if (!routes.includes(targetHref)) return;
+	const steps = tabHistory.stepsToHref(targetHref);
+	if (steps > 0) {
+		tabHistory.inFlight = true;
+		window.history.go(-steps);
+	} else {
+		// Cast: resolve() is string-based at runtime; the literal union is compile-time only.
+		goto(resolve(targetHref as '/home/innerPage'));
+	}
+}
+
+let lastProgrammaticNav = 0;
+/** Blocks double-issues fired before SvelteKit's onNavigate round-trip. */
+function throttled(): boolean {
+	const now = Date.now();
+	if (now - lastProgrammaticNav < 350) return true;
+	lastProgrammaticNav = now;
+	return false;
 }

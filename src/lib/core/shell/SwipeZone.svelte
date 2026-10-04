@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { goto } from '$app/navigation';
-	import { resolve } from '$app/paths';
-	import { switchTab, tabHistory } from '$lib/core/navigation/state.svelte';
+	import { switchInnerTab, switchTab, tabHistory } from '$lib/core/navigation/state.svelte';
 	import { adjacentTab, SWIPE_MAX_Y, SWIPE_MIN_X } from '$lib/core/navigation/helpers';
 	import type { TabName } from '$lib/config/tabs';
 
@@ -42,9 +40,7 @@
 		const idx = routes.indexOf(page.url.pathname);
 		const inner = idx === -1 ? undefined : routes[idx + dir];
 		if (inner) {
-			tabHistory.inFlight = true;
-			// Cast: resolve() is string-based at runtime; the literal union is compile-time only.
-			goto(resolve(inner as '/home/innerPage'));
+			switchInnerTab(routes, inner, page.url.pathname);
 			return;
 		}
 		// At the edge: escape to the neighboring main tab (no wrap).

@@ -3,6 +3,7 @@
 	import { resolve } from '$app/paths';
 	import { goBack } from '$lib/core/navigation/back';
 	import { asResolved } from '$lib/core/navigation/paths';
+	import { switchInnerTab } from '$lib/core/navigation/state.svelte';
 	import SwipeZone from '$lib/core/shell/SwipeZone.svelte';
 
 	let { children } = $props();
@@ -13,6 +14,12 @@
 		{ label: 'Activity', href: resolve('/home/innerPage/activity') }
 	];
 	const innerHrefs = ['/home/innerPage', '/home/innerPage/details', '/home/innerPage/activity'];
+
+	function selectInner(e: MouseEvent, href: string) {
+		if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+		e.preventDefault();
+		switchInnerTab(innerHrefs, href, page.url.pathname);
+	}
 </script>
 
 <SwipeZone routes={innerHrefs} parentRoot="home">
@@ -21,11 +28,18 @@
 		<span class="inner-title">Home detail</span>
 	</div>
 	<nav class="inner-tabs">
+		<!-- eslint-disable svelte/no-navigation-without-resolve -- hrefs are declared app paths -->
 		{#each innerTabs as t (t.href)}
-			<a href={t.href} class="inner-tab" class:active={page.url.pathname === t.href}>
+			<a
+				href={t.href}
+				onclick={(e) => selectInner(e, t.href)}
+				class="inner-tab"
+				class:active={page.url.pathname === t.href}
+			>
 				{t.label}
 			</a>
 		{/each}
+		<!-- eslint-enable svelte/no-navigation-without-resolve -->
 	</nav>
 	<div class="inner-body">
 		{@render children()}
