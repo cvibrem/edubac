@@ -1,9 +1,12 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { onNavigate } from '$app/navigation';
 	import { goBack } from '$lib/core/navigation/back';
 	import { asResolved } from '$lib/core/navigation/paths';
 	import { switchInnerTab } from '$lib/core/navigation/state.svelte';
 	import { HOME_DETAIL_HREFS } from '$lib/config/tabs';
+	import { STICKY_SWIPE_INNER_TAB } from '$lib/config/motion';
+	import { slideIn, slideOut } from '$lib/core/shell/transitions';
 	import SwipeZone from '$lib/core/shell/SwipeZone.svelte';
 
 	let { children } = $props();
@@ -24,6 +27,19 @@
 		e.preventDefault();
 		switchInnerTab(innerHrefs, href, page.url.pathname);
 	}
+
+	// Sticky-slide direction, same pattern as the global navDirection:
+	// onNavigate runs before the key block re-renders, so the slide
+	// always starts toward the incoming route — taps, swipes and back.
+	let innerDir = $state(1);
+	onNavigate((navigation) => {
+		const hrefs: readonly string[] = innerHrefs;
+		const from = navigation.from?.url.pathname ?? '';
+		const to = navigation.to?.url.pathname ?? '';
+		const a = hrefs.indexOf(from);
+		const b = hrefs.indexOf(to);
+		if (a !== -1 && b !== -1 && a !== b) innerDir = b > a ? 1 : -1;
+	});
 </script>
 
 <SwipeZone routes={innerHrefs} parentRoot="home">
@@ -49,8 +65,20 @@
 		{/each}
 		<!-- eslint-enable svelte/no-navigation-without-resolve -->
 	</nav>
-	<div class="inner-body">
-		{@render children()}
+	<div class="inner-body" class:inner-body-sticky={STICKY_SWIPE_INNER_TAB} data-swipe-body>
+		{#if STICKY_SWIPE_INNER_TAB}
+			{#key page.url.pathname}
+				<div
+					class="sticky-inner-page"
+					in:slideIn={{ direction: innerDir }}
+					out:slideOut={{ direction: innerDir }}
+				>
+					{@render children()}
+				</div>
+			{/key}
+		{:else}
+			{@render children()}
+		{/if}
 	</div>
 </SwipeZone>
 
@@ -102,5 +130,16 @@
 		flex: 1;
 		display: flex;
 		flex-direction: column;
+	}
+	/* Sticky mode: slide pages overlap absolutely, body clips them. */
+	.inner-body-sticky {
+		position: relative;
+		overflow: hidden;
+	}
+	.sticky-inner-page {
+		position: absolute;
+		inset: 0;
+		overflow-y: auto;
+		touch-action: pan-y;
 	}
 </style>

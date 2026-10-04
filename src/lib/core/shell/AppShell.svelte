@@ -2,11 +2,12 @@
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
 	import { onNavigate } from '$app/navigation';
-	import { f7MdForward } from '$lib/core/shell/easing';
+	import { USE_STICKY_SWIPE } from '$lib/config/motion';
 	import { navDirection, switchTab, tabHistory } from '$lib/core/navigation/state.svelte';
 	import { adjacentTab, SWIPE_MAX_Y, SWIPE_MIN_X, tabRootOf } from '$lib/core/navigation/helpers';
 	import { TAB_ORDER } from '$lib/config/tabs';
 	import { initRipple } from '$lib/core/shell/ripple';
+	import { slideIn, slideOut, springBack } from '$lib/core/shell/transitions';
 	import BottomNav from './BottomNav.svelte';
 
 	let { children } = $props();
@@ -43,7 +44,6 @@
 	} | null = null;
 	const DRAG_SLOP_PX = 12;
 	const EDGE_RESISTANCE = 0.35;
-	const SPRING_BACK_MS = 180;
 
 	function insideInnerZone(e: PointerEvent): boolean {
 		return !!(e.target as HTMLElement | null)?.closest?.('[data-swipe-zone]');
@@ -58,6 +58,7 @@
 	}
 
 	function onPointerMove(e: PointerEvent) {
+		if (!USE_STICKY_SWIPE) return;
 		if (!drag || e.pointerId !== drag.id) return;
 		const dx = e.clientX - drag.x0;
 		const dy = e.clientY - drag.y0;
@@ -82,26 +83,6 @@
 		const target = adjacentTab(tabRootOf(page.url.pathname), dx < 0 ? 1 : -1);
 		const effective = target ? clamped : clamped * EDGE_RESISTANCE;
 		el.style.transform = `translateX(${effective}px)`;
-	}
-
-	function springBack(el: HTMLElement) {
-		el.style.transition = `transform ${SPRING_BACK_MS}ms cubic-bezier(0, 0.8, 0.3, 1)`;
-		el.style.transform = 'translateX(0px)';
-		const done = () => {
-			el.removeEventListener('transitionend', done);
-			if (el.style.transform === 'translateX(0px)') {
-				el.style.transition = '';
-				el.style.transform = '';
-			}
-		};
-		el.addEventListener('transitionend', done);
-		// Fallback if transitionend never fires; guarded so a newer drag is untouched.
-		setTimeout(() => {
-			if (el.isConnected && el.style.transform === 'translateX(0px)') {
-				el.style.transition = '';
-				el.style.transform = '';
-			}
-		}, SPRING_BACK_MS + 120);
 	}
 
 	function onPointerUp(e: PointerEvent) {
@@ -146,33 +127,6 @@
 				el.style.transform = '';
 			}
 		}
-	}
-
-	function slideIn(_node: HTMLElement, { direction = 1, duration = 240 } = {}) {
-		return {
-			duration,
-			easing: f7MdForward,
-			css: (t: number) => `transform: translateX(${(1 - t) * 100 * direction}%)`
-		};
-	}
-
-	// Side-by-side: outgoing slides out while incoming slides in, same
-	// duration/easing, no opacity fade (the fade is what flashed white).
-	// Starts from the live drag offset (0 when released without dragging),
-	// so a drag release continues from under the finger instead of jumping.
-	function slideOut(node: HTMLElement, { direction = 1, duration = 240 } = {}) {
-		let startPx = 0;
-		try {
-			startPx = new DOMMatrixReadOnly(getComputedStyle(node).transform).m41;
-		} catch {
-			startPx = 0;
-		}
-		return {
-			duration,
-			easing: f7MdForward,
-			css: (t: number) =>
-				`transform: translateX(calc(${(1 - t) * -100 * direction}% + ${startPx * t}px))`
-		};
 	}
 </script>
 
