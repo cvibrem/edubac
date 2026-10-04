@@ -1,9 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { goto } from '$app/navigation';
 	import { TABS, type TabName } from '$lib/config/tabs';
-	import { tabHistory } from '$lib/core/navigation/state.svelte';
-	import { tabRootOf } from '$lib/core/navigation/helpers';
+	import { switchTab, tabHistory } from '$lib/core/navigation/state.svelte';
 	import { asResolved, type ResolvedPath } from '$lib/core/navigation/paths';
 
 	// Presentation lives here in the UI — the router config only knows name/href.
@@ -38,36 +36,9 @@
 		e.preventDefault();
 		if (tapping || tabHistory.inFlight) return;
 
-		const currentPath = page.url.pathname;
-		const currentRoot = tabRootOf(currentPath);
-
-		// Same tab: no-op at root, otherwise pop back to root (Pattern B).
-		if (currentRoot === tab.name) {
-			if (currentPath === tab.href) return;
-			const steps = tabHistory.stepsToRoot();
-			if (steps > 0) {
-				tapping = true;
-				tabHistory.inFlight = true;
-				window.history.go(-steps);
-				setTimeout(() => (tapping = false), 400);
-			} else {
-				// eslint-disable-next-line svelte/no-navigation-without-resolve
-				goto(tab.href);
-			}
-			return;
-		}
-
-		// Different tab: pop to its root href if visited, else push.
-		const steps = tabHistory.stepsToHref(tab.href);
-		if (steps > 0) {
-			tapping = true;
-			tabHistory.inFlight = true;
-			window.history.go(-steps);
-			setTimeout(() => (tapping = false), 400);
-		} else {
-			// eslint-disable-next-line svelte/no-navigation-without-resolve
-			goto(tab.href);
-		}
+		tapping = true;
+		setTimeout(() => (tapping = false), 400);
+		switchTab(tab.name, page.url.pathname);
 	}
 </script>
 

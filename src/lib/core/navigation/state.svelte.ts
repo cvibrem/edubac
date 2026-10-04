@@ -1,5 +1,7 @@
 import { TAB_HREF, TAB_ORDER } from '$lib/config/tabs';
 import { tabRootOf } from './helpers';
+import { goto } from '$app/navigation';
+import { resolve } from '$app/paths';
 import type { TabName } from '$lib/config/tabs';
 
 class NavigationDirection {
@@ -125,3 +127,31 @@ class SessionDepth {
 export const navDirection = new NavigationDirection();
 export const tabHistory = new TabHistory();
 export const sessionDepth = new SessionDepth();
+
+/**
+ * Single owner for programmatic tab switches (bottom bar taps, swipes).
+ * Same tab: no-op at root, else pop drill back to root (Pattern B).
+ * Different tab: pop to its root href if visited, else push.
+ */
+export function switchTab(target: TabName, currentPath: string): void {
+	if (tabHistory.inFlight) return;
+	const href = TAB_HREF[target];
+	if (tabRootOf(currentPath) === target) {
+		if (currentPath === href) return;
+		const steps = tabHistory.stepsToRoot();
+		if (steps > 0) {
+			tabHistory.inFlight = true;
+			window.history.go(-steps);
+		} else {
+			goto(resolve(href));
+		}
+		return;
+	}
+	const steps = tabHistory.stepsToHref(href);
+	if (steps > 0) {
+		tabHistory.inFlight = true;
+		window.history.go(-steps);
+	} else {
+		goto(resolve(href));
+	}
+}
