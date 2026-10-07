@@ -62,12 +62,19 @@
 	</header>
 
 	<div class="content">
-		{#key index}
-			<div class="copy" in:fade={{ duration: 350 }} out:fade={{ duration: 350 }} aria-live="polite">
-				<h1>{SLIDES[index].title}</h1>
-				<p>{SLIDES[index].text}</p>
-			</div>
-		{/key}
+		<div class="copy-stack">
+			{#key index}
+				<div
+					class="copy"
+					in:fade={{ duration: 350 }}
+					out:fade={{ duration: 350 }}
+					aria-live="polite"
+				>
+					<h1>{SLIDES[index].title}</h1>
+					<p>{SLIDES[index].text}</p>
+				</div>
+			{/key}
+		</div>
 		<button type="button" class="btn btn-block ripple cta" onclick={finish}> Commencer </button>
 	</div>
 </section>
@@ -193,6 +200,12 @@
 		gap: var(--sp-4);
 		padding: var(--pad-page);
 		padding-bottom: max(var(--sp-6), env(safe-area-inset-bottom, 0px));
+	}
+	.copy-stack {
+		display: grid;
+	}
+	.copy {
+		grid-area: 1 / 1;
 	}
 	.copy h1 {
 		margin-bottom: var(--sp-4);
