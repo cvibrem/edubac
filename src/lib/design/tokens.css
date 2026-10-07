@@ -1,31 +1,38 @@
 /* Design tokens — single source of truth for all EduBac UI.
    Light by default, dark via prefers-color-scheme or a manual `.dark` class.
-   To rebrand: change --primary (and its dark value) — everything follows. */
+   To rebrand: change --primary (and its dark value) — everything follows.
+   No pure white (#fff) or pure black (#000) anywhere in this file.
+
+   60-30-10 mapping (prevents the deep navy from feeling heavy):
+   - 60% → --bg ........... app background, screens
+   - 30% → --surface* ..... cards, bars, sheets
+   - 10% → --primary ...... buttons, active states, key accents only
+   Large fills use --primary-soft, never the raw primary. */
 
 :root {
 	--font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 
 	/* App + surfaces */
-	--bg: #f7f7f9;
-	--surface: #ffffff;
-	--surface-2: #f1f1f4;
-	--surface-3: #e6e6eb;
+	--bg: #edf0f5;
+	--surface: #f8f9fb;
+	--surface-2: #eff2f7;
+	--surface-3: #e2e7ef;
 	--ink: #17171c;
 	--ink-2: #5d5d6b;
 	--ink-3: #9a9aa8;
-	--line: rgba(0, 0, 0, 0.08);
-	--line-strong: rgba(0, 0, 0, 0.16);
+	--line: rgba(28, 77, 163, 0.1);
+	--line-strong: rgba(28, 77, 163, 0.22);
 
-	/* Brand */
-	--primary: #4f46e5;
-	--on-primary: #ffffff;
-	--primary-soft: #eceeff;
-	--on-primary-soft: #3730a3;
+	/* Brand — logo navy. White text on it is ~8:1 (WCAG AAA). */
+	--primary: #1c4da3;
+	--on-primary: #f7f9fd;
+	--primary-soft: #e3eaf7;
+	--on-primary-soft: #173e85;
 
 	/* Semantics */
 	--success: #15803d;
 	--warning: #b45309;
-	--error: #dc2626;
+	--error: #b3261e;
 
 	/* Type scale */
 	--fs-display: 2rem;
@@ -60,9 +67,9 @@
 	--r-full: 999px;
 
 	/* Elevation */
-	--shadow-1: 0 1px 2px rgba(0, 0, 0, 0.08);
-	--shadow-2: 0 2px 8px rgba(0, 0, 0, 0.1);
-	--shadow-3: 0 8px 24px rgba(0, 0, 0, 0.14);
+	--shadow-1: 0 1px 2px rgba(15, 31, 61, 0.08);
+	--shadow-2: 0 2px 8px rgba(15, 31, 61, 0.1);
+	--shadow-3: 0 8px 24px rgba(15, 31, 61, 0.14);
 
 	/* Legacy aliases (shell predates the token set) */
 	--color-surface: var(--surface);
@@ -72,20 +79,22 @@
 
 @media (prefers-color-scheme: dark) {
 	:root {
-		--bg: #0e0e11;
-		--surface: #141416;
-		--surface-2: #1e1e22;
-		--surface-3: #2a2a30;
-		--ink: #f2f2f5;
+		--bg: #0a0c11;
+		--surface: #11141b;
+		--surface-2: #1a1f29;
+		--surface-3: #242b38;
+		--ink: #edeff4;
 		--ink-2: #b9b9c4;
 		--ink-3: #7c7c8a;
-		--line: rgba(255, 255, 255, 0.1);
-		--line-strong: rgba(255, 255, 255, 0.22);
+		--line: rgba(143, 179, 234, 0.14);
+		--line-strong: rgba(143, 179, 234, 0.28);
 
-		--primary: #818cf8;
-		--on-primary: #101230;
-		--primary-soft: #2a2f55;
-		--on-primary-soft: #c7d2fe;
+		/* Lifted steel blue: raw navy is ~2.4:1 on dark bg, this is ~7.8:1
+		   with dark-navy text. */
+		--primary: #8fb3ea;
+		--on-primary: #0f1f3d;
+		--primary-soft: #1c2a45;
+		--on-primary-soft: #b9cff3;
 
 		--success: #4ade80;
 		--warning: #fbbf24;
@@ -99,20 +108,20 @@
 
 /* Manual override wins over the media query (loaded later, same specificity). */
 .dark {
-	--bg: #0e0e11;
-	--surface: #141416;
-	--surface-2: #1e1e22;
-	--surface-3: #2a2a30;
-	--ink: #f2f2f5;
+	--bg: #0a0c11;
+	--surface: #11141b;
+	--surface-2: #1a1f29;
+	--surface-3: #242b38;
+	--ink: #edeff4;
 	--ink-2: #b9b9c4;
 	--ink-3: #7c7c8a;
-	--line: rgba(255, 255, 255, 0.1);
-	--line-strong: rgba(255, 255, 255, 0.22);
+	--line: rgba(143, 179, 234, 0.14);
+	--line-strong: rgba(143, 179, 234, 0.28);
 
-	--primary: #818cf8;
-	--on-primary: #101230;
-	--primary-soft: #2a2f55;
-	--on-primary-soft: #c7d2fe;
+	--primary: #8fb3ea;
+	--on-primary: #0f1f3d;
+	--primary-soft: #1c2a45;
+	--on-primary-soft: #b9cff3;
 
 	--success: #4ade80;
 	--warning: #fbbf24;
