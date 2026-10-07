@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import { t } from '$lib/i18n/index.svelte';
 </script>
 
 <div class="demo-page" style="background:#2563eb;">
-	<h1>Home</h1>
-	<p>Tab root · blue</p>
-	<a class="ripple ripple-light" href={resolve('/home/innerPage')}>Open inner page →</a>
-	<a class="ripple ripple-light" href={resolve('/login')}>Go to Login (sibling group) →</a>
+	<h1>{t('demo.home.title')}</h1>
+	<p>{t('demo.home.text')}</p>
+	<a class="ripple ripple-light" href={resolve('/home/innerPage')}>{t('demo.home.openInner')}</a>
+	<a class="ripple ripple-light" href={resolve('/login')}>{t('demo.home.goLogin')}</a>
 </div>
 
 <style>

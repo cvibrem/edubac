@@ -1,6 +1,10 @@
+<script lang="ts">
+	import { t } from '$lib/i18n/index.svelte';
+</script>
+
 <div class="demo-page" style="background:#16a34a;">
-	<h1>Search</h1>
-	<p>Tab root · green</p>
+	<h1>{t('demo.search.title')}</h1>
+	<p>{t('demo.search.text')}</p>
 </div>
 
 <style>

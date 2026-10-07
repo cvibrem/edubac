@@ -7,19 +7,22 @@
 	import { HOME_DETAIL_HREFS } from '$lib/config/tabs';
 	import { STICKY_SWIPE_INNER_TAB } from '$lib/config/motion';
 	import { slideIn, slideOut } from '$lib/core/shell/transitions';
+	import { t, type TIKey } from '$lib/i18n/index.svelte';
 	import SwipeZone from '$lib/core/shell/SwipeZone.svelte';
 
 	let { children } = $props();
 
-	const LABEL: Record<string, string> = {
-		'/home/innerPage': 'Overview',
-		'/home/innerPage/details': 'Details',
-		'/home/innerPage/activity': 'Activity'
+	const KEY: Record<string, TIKey> = {
+		'/home/innerPage': 'inner.overview',
+		'/home/innerPage/details': 'inner.details',
+		'/home/innerPage/activity': 'inner.activity'
 	};
-	const innerTabs = HOME_DETAIL_HREFS.map((href) => ({
-		label: LABEL[href] ?? href,
-		href: asResolved(href)
-	}));
+	const innerTabs = $derived(
+		HOME_DETAIL_HREFS.map((href) => ({
+			label: t(KEY[href] ?? 'inner.overview'),
+			href: asResolved(href)
+		}))
+	);
 	const innerHrefs = HOME_DETAIL_HREFS;
 
 	function selectInner(e: MouseEvent, href: string) {
@@ -49,7 +52,7 @@
 			class="back-btn ripple ripple-light"
 			onclick={() => goBack(asResolved('/home'))}>←</button
 		>
-		<span class="inner-title">Home detail</span>
+		<span class="inner-title">{t('inner.title')}</span>
 	</div>
 	<nav class="inner-tabs">
 		<!-- eslint-disable svelte/no-navigation-without-resolve -- hrefs are declared app paths -->

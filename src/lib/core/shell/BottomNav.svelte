@@ -3,14 +3,9 @@
 	import { TABS, type TabName } from '$lib/config/tabs';
 	import { switchTab, tabHistory } from '$lib/core/navigation/state.svelte';
 	import { asResolved, type ResolvedPath } from '$lib/core/navigation/paths';
+	import { t, type TIKey } from '$lib/i18n/index.svelte';
 
 	// Presentation lives here in the UI — the router config only knows name/href.
-	const LABEL: Record<TabName, string> = {
-		home: 'Home',
-		search: 'Search',
-		notifications: 'Alerts',
-		profile: 'Profile'
-	};
 	const ICON: Record<TabName, string> = {
 		home: '🏠',
 		search: '🔍',
@@ -18,14 +13,12 @@
 		profile: '👤'
 	};
 
-	const tabs: { name: TabName; href: ResolvedPath; label: string; icon: string }[] = TABS.map(
-		(t) => ({
-			name: t.name,
-			href: asResolved(t.href),
-			label: LABEL[t.name],
-			icon: ICON[t.name]
-		})
-	);
+	const tabs: { name: TabName; href: ResolvedPath; key: TIKey; icon: string }[] = TABS.map((t) => ({
+		name: t.name,
+		href: asResolved(t.href),
+		key: `tabs.${t.name}` as TIKey,
+		icon: ICON[t.name]
+	}));
 
 	// Local throttle: blocks double-taps issued before SvelteKit's
 	// onNavigate/afterNavigate round-trip updates `inFlight`.
@@ -52,7 +45,7 @@
 			class:active={page.url.pathname.startsWith(tab.href)}
 		>
 			<span class="icon">{tab.icon}</span>
-			<span class="label">{tab.label}</span>
+			<span class="label">{t(tab.key)}</span>
 		</a>
 	{/each}
 	<!-- eslint-enable svelte/no-navigation-without-resolve -->

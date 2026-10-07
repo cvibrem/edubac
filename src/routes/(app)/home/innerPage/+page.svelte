@@ -1,17 +1,6 @@
-<div class="demo-page" style="background:#ea580c;">
-	<h1>Overview</h1>
-	<p>Inner tab 1 of 3 · orange</p>
-</div>
+<script lang="ts">
+	import { t } from '$lib/i18n/index.svelte';
+</script>
 
-<style>
-	.demo-page {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		gap: 0.5rem;
-		color: #fff;
-		padding: 2rem 1rem;
-	}
-</style>
+<h1>{t('demo.inner.overview.title')}</h1>
+<p>{t('demo.inner.overview.text')}</p>

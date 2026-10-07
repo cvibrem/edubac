@@ -5,25 +5,12 @@
 	import { resolve } from '$app/paths';
 	import { initRipple } from '$lib/core/shell/ripple';
 	import { markOnboardingSeen } from '$lib/onboarding/seen';
+	import { t, type TIKey } from '$lib/i18n/index.svelte';
 	import Logo from '$lib/design/Logo.svelte';
 
-	const SLIDES = [
-		{
-			art: 'art-discover',
-			title: 'Découvrir',
-			text: 'Accède aux anciennes épreuves officielles du BAC, par année et par série.'
-		},
-		{
-			art: 'art-practice',
-			title: 'Pratiquer',
-			text: 'Entraîne-toi avec des quiz interactifs et des exercices corrigés.'
-		},
-		{
-			art: 'art-improve',
-			title: 'Progresser',
-			text: 'Gagne des XP, suis ta progression, débloque des trophées et grimpe au classement.'
-		}
-	] as const;
+	const ARTS = ['art-discover', 'art-practice', 'art-improve'] as const;
+	const TITLE_KEYS = ['ob.s1title', 'ob.s2title', 'ob.s3title'] as const satisfies readonly TIKey[];
+	const TEXT_KEYS = ['ob.s1text', 'ob.s2text', 'ob.s3text'] as const satisfies readonly TIKey[];
 
 	const SLIDE_MS = 4000;
 
@@ -35,7 +22,7 @@
 	// while the tab is hidden so the cycle never jumps a slide.
 	$effect(() => {
 		const timer = setInterval(() => {
-			if (!document.hidden) index = (index + 1) % SLIDES.length;
+			if (!document.hidden) index = (index + 1) % ARTS.length;
 		}, SLIDE_MS);
 		return () => clearInterval(timer);
 	});
@@ -48,11 +35,7 @@
 
 <section class="onboarding" aria-label="Présentation">
 	{#key index}
-		<div
-			class="art {SLIDES[index].art}"
-			in:fade={{ duration: 600 }}
-			out:fade={{ duration: 600 }}
-		></div>
+		<div class="art {ARTS[index]}" in:fade={{ duration: 600 }} out:fade={{ duration: 600 }}></div>
 	{/key}
 	<div class="scrim"></div>
 
@@ -70,12 +53,14 @@
 					out:fade={{ duration: 350 }}
 					aria-live="polite"
 				>
-					<h1>{SLIDES[index].title}</h1>
-					<p>{SLIDES[index].text}</p>
+					<h1>{t(TITLE_KEYS[index])}</h1>
+					<p>{t(TEXT_KEYS[index])}</p>
 				</div>
 			{/key}
 		</div>
-		<button type="button" class="btn btn-block ripple cta" onclick={finish}> Commencer </button>
+		<button type="button" class="btn btn-block ripple cta" onclick={finish}>
+			{t('ob.start')}
+		</button>
 	</div>
 </section>
 
