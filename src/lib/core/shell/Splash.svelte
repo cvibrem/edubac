@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
+	import Logo from '$lib/design/Logo.svelte';
 
 	let { onFinished, minDuration = 1200 }: { onFinished: () => void; minDuration?: number } =
 		$props();
@@ -11,7 +12,10 @@
 </script>
 
 <div class="splash" out:fade={{ duration: 250 }}>
-	<img src="/assets/imgs/icon.svg" alt="App logo" class="logo" />
+	<div class="logo-wrap">
+		<Logo />
+	</div>
+	<p class="app-name">Edubac Haiti</p>
 </div>
 
 <style>
@@ -21,11 +25,25 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		background: var(--color-splash-bg);
+		background: var(--surface);
+		/* Logo follows the theme blue (navy light, steel blue dark). */
+		color: var(--primary);
 		z-index: 9999;
 	}
-	.logo {
-		width: 96px;
-		height: 96px;
+	.logo-wrap {
+		display: flex;
+		justify-content: center;
+		width: 60%;
+	}
+	.app-name {
+		position: absolute;
+		right: 0;
+		bottom: max(2rem, env(safe-area-inset-bottom, 0px));
+		left: 0;
+		margin: 0;
+		text-align: center;
+		color: var(--ink-3);
+		font-size: var(--fs-small);
+		font-weight: var(--fw-medium);
 	}
 </style>
