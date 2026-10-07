@@ -67,11 +67,11 @@
 </script>
 
 <svelte:head>
-	<link rel="icon" type="image/svg+xml" href="/edubac-logo.svg" />
+	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 	<link
 		rel="icon"
 		type="image/svg+xml"
-		href="/edubac-logo-dark.svg"
+		href="/favicon-dark.svg"
 		media="(prefers-color-scheme: dark)"
 	/>
 </svelte:head>
