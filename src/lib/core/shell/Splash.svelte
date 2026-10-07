@@ -33,7 +33,7 @@
 	.logo-wrap {
 		display: flex;
 		justify-content: center;
-		width: 60%;
+		width: 40%;
 	}
 	.app-name {
 		position: absolute;
@@ -43,7 +43,7 @@
 		margin: 0;
 		text-align: center;
 		color: var(--ink-3);
-		font-size: var(--fs-small);
+		font-size: var(--fs-display);
 		font-weight: var(--fw-medium);
 	}
 </style>
