@@ -19,9 +19,17 @@ Search green, Alerts amber, Profile purple, Login slate (`/login`, no tab bar).
 ## Structure
 
 - `src/lib/config/tabs.ts` — tab routes (name/href)
-- `src/lib/core/navigation/` — tab history mirror, `goBack()`, path helpers
-- `src/lib/core/shell/` — `AppShell`, `BottomNav` (labels/icons), transitions, splash
+- `src/lib/config/links.ts` — deep-link scheme (`edubac://`) + hosts
+- `src/lib/core/navigation/` — tab history mirror, `goBack()`, overlay-aware
+  `handleSystemBack()`, pure `parseDeepLink()`/`handleDeepLink()`
+- `src/lib/core/overlay/` — `openDialog()`/`openSheet()`/`openToast()` (back
+  dismisses modals instead of navigating)
+- `src/lib/core/shell/` — `AppShell`, `BottomNav` (labels/icons), transitions,
+  splash, `reducedMotion` helpers
+- `src/lib/native/` — the only Capacitor code (`bridge.ts`, dynamic import)
 - `src/routes/(app)/` — tab screens · `src/routes/(auth)/login/` — no tab bar
+- `tests/` — Playwright e2e (`npm run test:e2e`, dev on :8081)
+- `scripts/bump-version.mjs` — `npm run version:patch|minor|major`
 - `android/` — Capacitor platform, appId `com.myriad.edubac`
 
 Router details live in the base repo README.

@@ -20,6 +20,17 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <!-- Custom-scheme deep links: edubac://search, edubac://home/…
+                 (singleTask above routes warm opens to onNewIntent → appUrlOpen).
+                 New project = rename the scheme (+ APP_SCHEMES in config/links.ts).
+                 Optional https applinks need assetlinks.json on the host first:
+                 <data android:scheme="https" android:host="edubac.app" /> -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="edubac" />
+            </intent-filter>
         </activity>
 
         <provider

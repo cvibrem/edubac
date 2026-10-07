@@ -16,6 +16,8 @@
 	"ob.start": "Commencer",
 	"settings.title": "Profil",
 	"settings.language": "Langue",
+	"overlay.ok": "OK",
+	"overlay.dismiss": "Fermer",
 	"settings.languageHint": "La langue s'applique immédiatement, sans redémarrage.",
 	"demo.home.title": "Accueil",
 	"demo.home.text": "Racine d'onglet · bleu",

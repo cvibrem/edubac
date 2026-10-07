@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
+	import { motionMs } from '$lib/core/shell/reducedMotion';
 	import Logo from '$lib/design/Logo.svelte';
 
 	let { onFinished, minDuration = 1200 }: { onFinished: () => void; minDuration?: number } =
@@ -11,7 +12,7 @@
 	});
 </script>
 
-<div class="splash" out:fade={{ duration: 250 }}>
+<div class="splash" out:fade={{ duration: motionMs(250) }}>
 	<div class="logo-wrap">
 		<Logo />
 	</div>

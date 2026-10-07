@@ -3,6 +3,7 @@
 	import { switchInnerTab, switchTab, tabHistory } from '$lib/core/navigation/state.svelte';
 	import { adjacentTab, SWIPE_MAX_Y, SWIPE_MIN_X } from '$lib/core/navigation/helpers';
 	import { STICKY_SWIPE_INNER_TAB } from '$lib/config/motion';
+	import { isReducedMotion } from '$lib/core/shell/reducedMotion';
 	import { springBack } from '$lib/core/shell/transitions';
 	import type { TabName } from '$lib/config/tabs';
 
@@ -47,7 +48,7 @@
 	}
 
 	function onPointerMove(e: PointerEvent) {
-		if (!STICKY_SWIPE_INNER_TAB) return;
+		if (!STICKY_SWIPE_INNER_TAB || isReducedMotion()) return;
 		if (!drag || e.pointerId !== drag.id) return;
 		const dx = e.clientX - drag.x0;
 		const dy = e.clientY - drag.y0;

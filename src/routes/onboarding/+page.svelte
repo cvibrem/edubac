@@ -4,6 +4,7 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { initRipple } from '$lib/core/shell/ripple';
+	import { isReducedMotion } from '$lib/core/shell/reducedMotion';
 	import { markOnboardingSeen } from '$lib/onboarding/seen';
 	import { t, type TIKey } from '$lib/i18n/index.svelte';
 	import Logo from '$lib/design/Logo.svelte';
@@ -20,7 +21,9 @@
 
 	// Auto-play only (no gestures): advances every SLIDE_MS, skips ticks
 	// while the tab is hidden so the cycle never jumps a slide.
+	// Reduced motion: no autoplay — the user advances by tapping Commencer.
 	$effect(() => {
+		if (isReducedMotion()) return;
 		const timer = setInterval(() => {
 			if (!document.hidden) index = (index + 1) % ARTS.length;
 		}, SLIDE_MS);

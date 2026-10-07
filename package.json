@@ -15,10 +15,16 @@
 		"format": "prettier --write .",
 		"build:android": "npm run build && npx cap sync android && cd android && sh gradlew assembleDebug",
 		"deploy:usb": "npm run build && npx cap sync android && cd android && sh gradlew assembleDebug && adb install -r app/build/outputs/apk/debug/app-debug.apk",
-		"deploy:usb:launch": "adb shell monkey -p com.myriad.edubac -c android.intent.category.LAUNCHER 1"
+		"deploy:usb:launch": "adb shell monkey -p com.myriad.edubac -c android.intent.category.LAUNCHER 1",
+		"test:e2e": "playwright test",
+		"version:patch": "node scripts/bump-version.mjs patch",
+		"version:minor": "node scripts/bump-version.mjs minor",
+		"version:major": "node scripts/bump-version.mjs major",
+		"version:set": "node scripts/bump-version.mjs"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
+		"@playwright/test": "^1.63.0",
 		"@sveltejs/adapter-static": "^3.0.10",
 		"@sveltejs/kit": "^2.63.0",
 		"@sveltejs/vite-plugin-svelte": "^7.1.2",

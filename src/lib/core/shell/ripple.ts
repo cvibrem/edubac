@@ -72,6 +72,15 @@ function finishRipple(
 
 /** Install document-level ripple delegation. Returns a cleanup function. */
 export function initRipple(): () => void {
+	const noop = () => {};
+	// Reduced motion: no press waves at all (the .ripple class is harmless).
+	if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
+		try {
+			if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return noop;
+		} catch {
+			// Fall through to normal ripple.
+		}
+	}
 	const active = new Map<number, ActiveRipple>();
 
 	function onPointerDown(e: PointerEvent): void {

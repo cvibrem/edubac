@@ -72,3 +72,18 @@ button,
 .stack-page {
 	overscroll-behavior: contain;
 }
+
+/* Accessibility: honor prefers-reduced-motion. This kills CSS transitions
+   and keyframe animations (ripple waves, overlay/dialog motion, fades).
+   JS-driven Svelte transitions check matchMedia too — see
+   core/shell/reducedMotion.ts — since rAF tweens ignore this block. */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+}

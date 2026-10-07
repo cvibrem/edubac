@@ -7,6 +7,7 @@
 	import { adjacentTab, SWIPE_MAX_Y, SWIPE_MIN_X, tabRootOf } from '$lib/core/navigation/helpers';
 	import { TAB_ORDER } from '$lib/config/tabs';
 	import { initRipple } from '$lib/core/shell/ripple';
+	import { isReducedMotion } from '$lib/core/shell/reducedMotion';
 	import { slideIn, slideOut, springBack } from '$lib/core/shell/transitions';
 	import BottomNav from './BottomNav.svelte';
 
@@ -58,7 +59,8 @@
 	}
 
 	function onPointerMove(e: PointerEvent) {
-		if (!USE_STICKY_SWIPE) return;
+		// Sticky drag is motion: reduced-motion users keep release-to-navigate.
+		if (!USE_STICKY_SWIPE || isReducedMotion()) return;
 		if (!drag || e.pointerId !== drag.id) return;
 		const dx = e.clientX - drag.x0;
 		const dy = e.clientY - drag.y0;

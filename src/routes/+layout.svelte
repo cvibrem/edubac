@@ -1,21 +1,25 @@
 <script lang="ts">
-	import { Capacitor, registerPlugin } from '@capacitor/core';
-	import { App } from '@capacitor/app';
 	import { onMount } from 'svelte';
 
 	import Splash from '$lib/core/shell/Splash.svelte';
+	import OverlayHost from '$lib/core/overlay/OverlayHost.svelte';
 	import '$lib/design/tokens.css';
 	import '$lib/design/base.css';
 	import '../app.css';
 	import '$lib/core/shell/ripple.css';
 
-	import { afterNavigate, goto, onNavigate } from '$app/navigation';
+	import { afterNavigate, beforeNavigate, goto, onNavigate } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { navDirection, tabHistory } from '$lib/core/navigation/state.svelte';
+	import { overlay } from '$lib/core/overlay/state.svelte';
+	import { isNativePlatform } from '$lib/native/platform';
 	import { hasSeenOnboarding } from '$lib/onboarding/seen';
 
-	const CustomSplash = registerPlugin<{ hide: () => Promise<void> }>('CustomSplash');
+	// Shell boundary: this layout never imports `@capacitor/*` statically.
+	// Native wiring (back button, deep links, splash hide) lives in
+	// `src/lib/native/bridge.ts` and is dynamically imported on device only,
+	// so the browser build is a plain SPA with zero Capacitor code.
 
 	onMount(async () => {
 		// Seed once: afterNavigate alone misses the initial `enter` navigation
@@ -29,35 +33,28 @@
 			await goto(resolve('/onboarding'), { replaceState: true });
 		}
 
-		if (Capacitor.isNativePlatform()) {
-			setTimeout(async () => {
-				try {
-					await CustomSplash.hide();
-				} catch (error) {
-					console.error('Error showing splash screen:', error);
-				}
-			}, 100);
+		if (isNativePlatform()) {
+			import('$lib/native/bridge')
+				.then((m) => m.initNativeBridge())
+				.catch((error) => console.error('Error initing native bridge:', error));
 		}
 	});
 
 	let { children } = $props();
-	let shouldShowWebSplashscreen = !Capacitor.isNativePlatform();
+	let shouldShowWebSplashscreen = !isNativePlatform();
 	let alreadyShowSplash = $state(false);
 
-	$effect(() => {
-		if (!Capacitor.isNativePlatform()) return;
-
-		const listenerPromise = App.addListener('backButton', ({ canGoBack }) => {
-			if (canGoBack) {
-				window.history.back();
-			} else {
-				App.exitApp();
-			}
-		});
-
-		return () => {
-			listenerPromise.then((handle) => handle.remove());
-		};
+	// Modal overlays own the back button: a system back (native button or
+	// browser back) dismisses the top dialog/sheet instead of navigating.
+	// The native bridge calls history.back() for hardware presses, so both
+	// paths funnel through here. inFlight is reset defensively — a cancelled
+	// popstate must never wedge the router's double-tap guard.
+	beforeNavigate((navigation) => {
+		if (navigation.type === 'popstate' && overlay.hasModal) {
+			tabHistory.inFlight = false;
+			navigation.cancel();
+			overlay.dismissTop();
+		}
 	});
 
 	// Global nav mirror: single owner (works for tab + non-tab routes).
@@ -71,6 +68,9 @@
 			type: navigation.type,
 			toPath: navigation.to?.url?.pathname ?? page.url.pathname
 		});
+		// Pending dialogs/sheets don't survive a route change (their
+		// promises resolve null). Toasts are unaffected.
+		overlay.clearModals();
 	});
 </script>
 
@@ -88,4 +88,5 @@
 	<Splash onFinished={() => (alreadyShowSplash = true)} />
 {:else}
 	{@render children()}
+	<OverlayHost />
 {/if}

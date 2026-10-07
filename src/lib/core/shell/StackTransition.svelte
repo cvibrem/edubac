@@ -2,6 +2,7 @@
 	import { page } from '$app/state';
 	import { scale, fade } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
+	import { motionMs } from '$lib/core/shell/reducedMotion';
 
 	let { children } = $props();
 </script>
@@ -9,8 +10,8 @@
 {#key page.url.pathname}
 	<div
 		class="stack-page"
-		in:scale={{ start: 0.96, duration: 200, easing: quintOut }}
-		out:fade={{ duration: 120 }}
+		in:scale={{ start: 0.96, duration: motionMs(200), easing: quintOut }}
+		out:fade={{ duration: motionMs(120) }}
 	>
 		{@render children()}
 	</div>
