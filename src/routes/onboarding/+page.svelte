@@ -68,14 +68,7 @@
 				<p>{SLIDES[index].text}</p>
 			</div>
 		{/key}
-		<div class="dots" aria-hidden="true">
-			{#each SLIDES as s, i (s.title)}
-				<span class="dot" class:active={i === index}></span>
-			{/each}
-		</div>
-		<button type="button" class="btn btn-primary btn-block ripple" onclick={finish}>
-			Commencer
-		</button>
+		<button type="button" class="btn btn-block ripple cta" onclick={finish}> Commencer </button>
 	</div>
 </section>
 
@@ -153,15 +146,23 @@
 		border: 2px solid rgba(255, 255, 255, 0.32);
 		border-radius: 50%;
 	}
-	/* Contrast scrim: transparent at mid-screen, opaque --bg at the bottom
+	/* Contrast scrim: transparent high up, opaque brand navy at the bottom
 	   so copy + button stay readable in both themes. */
 	.scrim {
 		position: absolute;
-		top: 50%;
+		top: 25%;
 		right: 0;
 		bottom: 0;
 		left: 0;
-		background: linear-gradient(to bottom, transparent, var(--bg) 72%);
+		background: linear-gradient(to bottom, transparent, #1c4da3 72%);
+	}
+	@media (prefers-color-scheme: dark) {
+		.scrim {
+			background: linear-gradient(to bottom, transparent, #0b1a36 72%);
+		}
+	}
+	:global(.dark) .scrim {
+		background: linear-gradient(to bottom, transparent, #0b1a36 72%);
 	}
 	.brand {
 		position: absolute;
@@ -194,25 +195,22 @@
 		padding-bottom: max(var(--sp-6), env(safe-area-inset-bottom, 0px));
 	}
 	.copy h1 {
-		margin-bottom: var(--sp-2);
+		margin-bottom: var(--sp-4);
+		font-size: 1.75rem;
+		color: #f7f9fd;
 	}
 	.copy p {
-		margin: 0;
-		color: var(--ink-2);
+		margin: 0 0 var(--sp-6);
+		font-size: var(--fs-h3);
+		color: rgba(247, 249, 253, 0.85);
 	}
-	.dots {
-		display: flex;
-		gap: var(--sp-2);
-	}
-	.dot {
-		width: 0.5rem;
-		height: 0.5rem;
-		border-radius: var(--r-full);
-		background: var(--ink-3);
-		transition: width 250ms;
-	}
-	.dot.active {
-		width: 1.5rem;
-		background: var(--primary);
+	/* White CTA on the navy scrim (both themes): narrower + softer radius
+	   than the default full-width pill. */
+	.cta {
+		width: 88%;
+		margin-inline: auto;
+		border-radius: var(--r-lg);
+		background: #f7f9fd;
+		color: #1c4da3;
 	}
 </style>
