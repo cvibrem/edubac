@@ -9,9 +9,11 @@
 	import '../app.css';
 	import '$lib/core/shell/ripple.css';
 
-	import { afterNavigate, onNavigate } from '$app/navigation';
+	import { afterNavigate, goto, onNavigate } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { navDirection, tabHistory } from '$lib/core/navigation/state.svelte';
+	import { hasSeenOnboarding } from '$lib/onboarding/seen';
 
 	const CustomSplash = registerPlugin<{ hide: () => Promise<void> }>('CustomSplash');
 
@@ -20,6 +22,12 @@
 		// that mounts this layout (incl. `/` -> `/home` redirect).
 		tabHistory.seed(page.url.pathname);
 		navDirection.seed(page.url.pathname);
+
+		// First launch: route to onboarding (replaceState, so back never
+		// returns here). Covered by the web splash — no visible flash.
+		if (!hasSeenOnboarding() && page.url.pathname !== resolve('/onboarding')) {
+			await goto(resolve('/onboarding'), { replaceState: true });
+		}
 
 		if (Capacitor.isNativePlatform()) {
 			setTimeout(async () => {
