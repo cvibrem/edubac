@@ -1,18 +1,15 @@
+
 import { DEFAULT_LOCALE, STORAGE_KEY, SUPPORTED_LOCALES, type LocaleCode } from '$lib/config/i18n';
-import frFR from './locales/fr-FR.json';
-import htHT from './locales/ht-HT.json';
+import { catalogs, defaultCatalog } from './catalogs';
 
 /**
  * Minimal JSON i18n for the tab-shell base. Flat dotted keys; every locale
  * must carry the exact key set of the default locale — a missing or extra
- * key is a compile error, not a runtime surprise.
+ * key is a compile error (see catalogs.ts), not a runtime surprise.
  */
-const catalogs: Record<LocaleCode, Record<TIKey, string>> = {
-	'fr-FR': frFR,
-	'ht-HT': htHT satisfies Record<TIKey, string>
-};
+export type TIKey = keyof typeof defaultCatalog;
 
-export type TIKey = keyof typeof frFR;
+const all: Record<LocaleCode, Record<TIKey, string>> = catalogs;
 
 class LocaleState {
 	current = $state<LocaleCode>(DEFAULT_LOCALE);
@@ -21,7 +18,7 @@ class LocaleState {
 export const localeState = new LocaleState();
 
 function resolveLocale(code: string | null | undefined): LocaleCode {
-	if (code && code in catalogs) return code as LocaleCode;
+	if (code && code in all) return code as LocaleCode;
 	if (code) {
 		const prefix = code.split('-')[0]?.toLowerCase() ?? '';
 		const match = SUPPORTED_LOCALES.find((l) => l.code.toLowerCase().startsWith(prefix));
@@ -67,7 +64,7 @@ export function setLocale(code: LocaleCode): void {
 
 /** Reactive: re-renders automatically on setLocale. Falls back to default, then the key. */
 export function t(key: TIKey): string {
-	const hit = catalogs[localeState.current][key] ?? catalogs[DEFAULT_LOCALE][key] ?? key;
+	const hit = all[localeState.current][key] ?? all[DEFAULT_LOCALE][key] ?? key;
 	if (hit === key && import.meta.env.DEV) {
 		console.warn(`[i18n] missing key "${key}" for locale "${localeState.current}"`);
 	}
