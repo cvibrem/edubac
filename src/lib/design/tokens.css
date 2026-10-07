@@ -1,0 +1,120 @@
+/* Design tokens — single source of truth for all EduBac UI.
+   Light by default, dark via prefers-color-scheme or a manual `.dark` class.
+   To rebrand: change --primary (and its dark value) — everything follows. */
+
+:root {
+	--font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+	/* App + surfaces */
+	--bg: #f7f7f9;
+	--surface: #ffffff;
+	--surface-2: #f1f1f4;
+	--surface-3: #e6e6eb;
+	--ink: #17171c;
+	--ink-2: #5d5d6b;
+	--ink-3: #9a9aa8;
+	--line: rgba(0, 0, 0, 0.08);
+	--line-strong: rgba(0, 0, 0, 0.16);
+
+	/* Brand */
+	--primary: #4f46e5;
+	--on-primary: #ffffff;
+	--primary-soft: #eceeff;
+	--on-primary-soft: #3730a3;
+
+	/* Semantics */
+	--success: #15803d;
+	--warning: #b45309;
+	--error: #dc2626;
+
+	/* Type scale */
+	--fs-display: 2rem;
+	--fs-h1: 1.5rem;
+	--fs-h2: 1.25rem;
+	--fs-h3: 1.125rem;
+	--fs-body: 1rem;
+	--fs-small: 0.875rem;
+	--fs-caption: 0.75rem;
+	--fw-regular: 400;
+	--fw-medium: 500;
+	--fw-bold: 700;
+	--lh-tight: 1.2;
+	--lh-body: 1.5;
+
+	/* Spacing */
+	--sp-1: 0.25rem;
+	--sp-2: 0.5rem;
+	--sp-3: 0.75rem;
+	--sp-4: 1rem;
+	--sp-5: 1.25rem;
+	--sp-6: 1.5rem;
+	--sp-8: 2rem;
+	--sp-10: 2.5rem;
+	--pad-page: 1rem;
+
+	/* Shape */
+	--r-sm: 8px;
+	--r-md: 12px;
+	--r-lg: 16px;
+	--r-xl: 24px;
+	--r-full: 999px;
+
+	/* Elevation */
+	--shadow-1: 0 1px 2px rgba(0, 0, 0, 0.08);
+	--shadow-2: 0 2px 8px rgba(0, 0, 0, 0.1);
+	--shadow-3: 0 8px 24px rgba(0, 0, 0, 0.14);
+
+	/* Legacy aliases (shell predates the token set) */
+	--color-surface: var(--surface);
+	--color-accent: var(--primary);
+	--color-splash-bg: var(--primary);
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--bg: #0e0e11;
+		--surface: #141416;
+		--surface-2: #1e1e22;
+		--surface-3: #2a2a30;
+		--ink: #f2f2f5;
+		--ink-2: #b9b9c4;
+		--ink-3: #7c7c8a;
+		--line: rgba(255, 255, 255, 0.1);
+		--line-strong: rgba(255, 255, 255, 0.22);
+
+		--primary: #818cf8;
+		--on-primary: #101230;
+		--primary-soft: #2a2f55;
+		--on-primary-soft: #c7d2fe;
+
+		--success: #4ade80;
+		--warning: #fbbf24;
+		--error: #f87171;
+
+		--shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+		--shadow-2: 0 2px 8px rgba(0, 0, 0, 0.45);
+		--shadow-3: 0 8px 24px rgba(0, 0, 0, 0.5);
+	}
+}
+
+/* Manual override wins over the media query (loaded later, same specificity). */
+.dark {
+	--bg: #0e0e11;
+	--surface: #141416;
+	--surface-2: #1e1e22;
+	--surface-3: #2a2a30;
+	--ink: #f2f2f5;
+	--ink-2: #b9b9c4;
+	--ink-3: #7c7c8a;
+	--line: rgba(255, 255, 255, 0.1);
+	--line-strong: rgba(255, 255, 255, 0.22);
+
+	--primary: #818cf8;
+	--on-primary: #101230;
+	--primary-soft: #2a2f55;
+	--on-primary-soft: #c7d2fe;
+
+	--success: #4ade80;
+	--warning: #fbbf24;
+	--error: #f87171;
+}

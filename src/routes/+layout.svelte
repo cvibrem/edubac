@@ -4,6 +4,8 @@
 	import { onMount } from 'svelte';
 
 	import Splash from '$lib/core/shell/Splash.svelte';
+	import '$lib/design/tokens.css';
+	import '$lib/design/base.css';
 	import '../app.css';
 	import '$lib/core/shell/ripple.css';
 

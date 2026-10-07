@@ -1,10 +1,3 @@
-:root {
-	--color-splash-bg: #4f46e5;
-	--color-surface: #ffffff;
-	--color-accent: #4f46e5;
-	--dark-color-surface: #141414;
-}
-
 html,
 body {
 	margin: 0;
@@ -12,7 +5,7 @@ body {
 	overflow: hidden;
 	/* the app shell owns scrolling, not the document */
 
-	background-color: var(--color-surface);
+	background-color: var(--bg);
 }
 
 #svelte,
