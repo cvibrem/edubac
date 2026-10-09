@@ -196,20 +196,23 @@
 		grid-area: 1 / 1;
 	}
 	.copy h1 {
-		margin-bottom: var(--sp-4);
-		font-size: 1.75rem;
+		margin: 0 0 var(--sp-2);
+		font-size: clamp(2.5rem, 11vw, 3.5rem);
+		line-height: 1.05;
 		color: #f7f9fd;
 	}
 	.copy p {
 		margin: 0 0 var(--sp-6);
-		font-size: var(--fs-h3);
+		font-size: var(--fs-body);
 		color: rgba(247, 249, 253, 0.85);
 	}
-	/* White CTA on the navy scrim (both themes): narrower + softer radius
-	   than the default full-width pill. */
+	/* White CTA on the navy scrim (both themes): full content width, tall
+	   like the mockup, softer radius than the default pill. */
 	.cta {
-		width: 88%;
-		margin-inline: auto;
+		width: 100%;
+		min-height: 3.75rem;
+		font-size: var(--fs-body);
+		font-weight: var(--fw-medium);
 		border-radius: var(--r-lg);
 		background: #f7f9fd;
 		color: #1c4da3;
