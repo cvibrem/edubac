@@ -34,5 +34,20 @@
 	"demo.inner.details.title": "Détails",
 	"demo.inner.details.text": "Onglet interne 2 sur 3 · sarcelle",
 	"demo.inner.activity.title": "Activité",
-	"demo.inner.activity.text": "Onglet interne 3 sur 3 · rose"
+	"demo.inner.activity.text": "Onglet interne 3 sur 3 · rose",
+	"demo.home.overlayLab": "Labo overlays (test manuel)",
+	"demo.home.dlgBtn": "Ouvrir un dialogue",
+	"demo.home.sheetBtn": "Ouvrir un panneau",
+	"demo.home.toastBtn": "Afficher un toast",
+	"demo.home.linkBtn": "Lien profond → Alertes",
+	"demo.dlg.title": "Télécharger le sujet ?",
+	"demo.dlg.message": "Environ 12 Mo, conservé hors ligne.",
+	"demo.dlg.download": "Télécharger",
+	"demo.dlg.cancel": "Annuler",
+	"demo.dlg.result": "Choix",
+	"demo.sheet.title": "Trier par",
+	"demo.sheet.recent": "Plus récents",
+	"demo.sheet.oldest": "Plus anciens",
+	"demo.toast.title": "Enregistré",
+	"demo.toast.message": "Copie hors ligne prête."
 }

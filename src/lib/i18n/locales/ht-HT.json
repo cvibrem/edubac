@@ -34,5 +34,20 @@
 	"demo.inner.details.title": "Detay",
 	"demo.inner.details.text": "Onglè anndan 2 sou 3 · ble-vèt",
 	"demo.inner.activity.title": "Aktivite",
-	"demo.inner.activity.text": "Onglè anndan 3 sou 3 · woz"
+	"demo.inner.activity.text": "Onglè anndan 3 sou 3 · woz",
+	"demo.home.overlayLab": "Labo fennèt (tès manyèl)",
+	"demo.home.dlgBtn": "Louvri yon dyalòg",
+	"demo.home.sheetBtn": "Louvri yon pano",
+	"demo.home.toastBtn": "Montre yon tòs",
+	"demo.home.linkBtn": "Lyen pwofon → Alèt",
+	"demo.dlg.title": "Telechaje sijè a ?",
+	"demo.dlg.message": "Anviwon 12 Mo, konsève san entènèt.",
+	"demo.dlg.download": "Telechaje",
+	"demo.dlg.cancel": "Anile",
+	"demo.dlg.result": "Chwa",
+	"demo.sheet.title": "Triye pa",
+	"demo.sheet.recent": "Pi resan",
+	"demo.sheet.oldest": "Pi ansyen",
+	"demo.toast.title": "Anrejistre",
+	"demo.toast.message": "Kopi san entènèt pare."
 }
