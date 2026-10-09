@@ -206,8 +206,14 @@
 		font-size: var(--fs-body);
 		color: rgba(247, 249, 253, 0.85);
 	}
-	/* White CTA on the navy scrim (both themes): full content width, tall
-	   like the mockup, softer radius than the default pill. */
+	/* Visible press wave on the white CTA: the default blurred button
+	   variant is imperceptible on near-white, so use a solid navy wash. */
+	.cta :global(.ripple-wave) {
+		background-image: none;
+		background-color: rgba(28, 77, 163, 0.18);
+		animation: ripple-in 200ms forwards;
+	}
+	/* White CTA on the navy scrim (both themes): full content width, tall. */
 	.cta {
 		width: 100%;
 		min-height: 3.75rem;
