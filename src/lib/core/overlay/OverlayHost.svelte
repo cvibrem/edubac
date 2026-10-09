@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { fade, fly } from 'svelte/transition';
 	import { overlay, type OverlayEntry } from '$lib/core/overlay/state.svelte';
 	import { motionMs } from '$lib/core/shell/reducedMotion';
@@ -15,6 +16,18 @@
 	function scrimTap(entry: OverlayEntry) {
 		overlay.dismiss(entry.id);
 	}
+
+	// Guard pops never reach SvelteKit's beforeNavigate (popping a shallow
+	// entry is a state sync, not a navigation), so this listener owns them.
+	// It sees EVERY popstate but only acts on guard territory — everything
+	// else is SvelteKit's business.
+	onMount(() => {
+		const onPopState = (e: PopStateEvent) => {
+			overlay.onGuardPop(e.state);
+		};
+		window.addEventListener('popstate', onPopState);
+		return () => window.removeEventListener('popstate', onPopState);
+	});
 
 	/** Initial keyboard focus for the dialog panel (a11y without autofocus). */
 	function focusFirst(node: HTMLElement) {

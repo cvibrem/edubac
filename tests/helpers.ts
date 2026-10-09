@@ -83,6 +83,26 @@ export function lastDialogResult(page: Page): Promise<unknown> {
 	return page.evaluate(() => (window as unknown as Record<string, unknown>).__lastDialogResult);
 }
 
+/** Back-stop guard marker (mirrors OVERLAY_GUARD_KEY — kept literal: tests
+ *  can't resolve the $lib alias at runtime). SvelteKit nests custom state
+ *  inside its page-state envelope, so scan one level deep. */
+export function historyGuard(page: Page): Promise<unknown> {
+	return page.evaluate(() => {
+		const s = window.history.state as Record<string, unknown> | null;
+		if (!s || typeof s !== 'object') return null;
+		for (const v of Object.values(s)) {
+			if (!!v && typeof v === 'object' && '__overlay_guard' in (v as object)) {
+				return (v as Record<string, unknown>)['__overlay_guard'];
+			}
+		}
+		return null;
+	});
+}
+
+export function historyLength(page: Page): Promise<number> {
+	return page.evaluate(() => window.history.length);
+}
+
 /**
  * Tap-to-navigate with retry. The shell throttles programmatic navs issued
  * within ~350ms (double-tap guard) — Playwright taps faster than humans, so

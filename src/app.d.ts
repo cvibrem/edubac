@@ -5,7 +5,11 @@ declare global {
 		// interface Error {}
 		// interface Locals {}
 		// interface PageData {}
-		// interface PageState {}
+		// Back-stop marker for shell overlay modals (see core/overlay/state.svelte.ts).
+		// Keep in sync with OVERLAY_GUARD_KEY.
+		interface PageState {
+			__overlay_guard?: number;
+		}
 		// interface Platform {}
 	}
 }
