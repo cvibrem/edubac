@@ -4,15 +4,30 @@
    Everything here references tokens.css — rebrand flows through. */
 
 .auth-page {
-	min-height: 100dvh;
+	/* Own scroll container: the shell pins body overflow hidden, so a tall
+	   column (short viewport, large text) must scroll here — never clip. */
+	height: 100dvh;
 	display: flex;
 	flex-direction: column;
+	overflow-y: auto;
+	overscroll-behavior: contain;
 	background: var(--bg);
 	color: var(--ink);
 }
 
+/* Border-box within auth only: width:100% + padding must stay inside the
+   viewport (content-box would push the wrap/buttons 16-40px past the
+   right edge, invisibly clipped by the shell). The shell predates any
+   global reset, so this stays scoped — never touch the shared chrome. */
+.auth-page,
+.auth-page *,
+.auth-page *::before,
+.auth-page *::after {
+	box-sizing: border-box;
+}
+
 .auth-wrap {
-	flex: 1;
+	flex: 1 0 auto;
 	display: flex;
 	flex-direction: column;
 	gap: var(--sp-5);
