@@ -8,6 +8,7 @@
 	import { markOnboardingSeen } from '$lib/onboarding/seen';
 	import { t, type TIKey } from '$lib/i18n/index.svelte';
 	import Logo from '$lib/design/Logo.svelte';
+	import TitleMorph from './TitleMorph.svelte';
 
 	const ARTS = ['art-discover', 'art-practice', 'art-improve'] as const;
 	const TITLE_KEYS = ['ob.s1title', 'ob.s2title', 'ob.s3title'] as const satisfies readonly TIKey[];
@@ -49,17 +50,14 @@
 
 	<div class="content">
 		<div class="copy-stack">
-			{#key index}
-				<div
-					class="copy"
-					in:fade={{ duration: 350 }}
-					out:fade={{ duration: 350 }}
-					aria-live="polite"
-				>
-					<h1>{t(TITLE_KEYS[index])}</h1>
-					<p>{t(TEXT_KEYS[index])}</p>
-				</div>
-			{/key}
+			<div class="copy" aria-live="polite">
+				<h1><TitleMorph text={t(TITLE_KEYS[index])} /></h1>
+				{#key index}
+					<p in:fade={{ duration: 350 }} out:fade={{ duration: 350 }}>
+						{t(TEXT_KEYS[index])}
+					</p>
+				{/key}
+			</div>
 		</div>
 		<button type="button" class="btn btn-block ripple cta" onclick={finish}>
 			{t('ob.start')}
