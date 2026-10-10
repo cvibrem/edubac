@@ -26,6 +26,9 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		/* Lift the mark above dead-center: the bottom padding shifts the
+		   centered logo up, leaving its center at ~40% viewport height. */
+		padding-bottom: 20vh;
 		background: var(--surface);
 		/* Logo follows the theme blue (navy light, steel blue dark). */
 		color: var(--primary);
@@ -34,7 +37,7 @@
 	.logo-wrap {
 		display: flex;
 		justify-content: center;
-		width: 40%;
+		width: 35%;
 	}
 	.app-name {
 		position: absolute;
