@@ -37,8 +37,8 @@
 		justify-content: center;
 		/* Lift the mark above dead-center: the bottom padding shifts the
 		   centered logo up, leaving its center at ~40% viewport height. */
-		padding-bottom: 30vh;
-		background: var(--surface);
+		padding-bottom: 20vh;
+		background: var(--bg);
 		/* Logo follows the theme blue (navy light, steel blue dark). */
 		color: var(--primary);
 		z-index: 9999;
@@ -56,7 +56,7 @@
 		margin: 0;
 		text-align: center;
 		color: var(--ink-3);
-		font-size: var(--fs-h1);
+		font-size: var(--fs-display);
 		font-weight: var(--fw-medium);
 	}
 </style>
