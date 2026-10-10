@@ -9,15 +9,19 @@
 	import { t, type TIKey } from '$lib/i18n/index.svelte';
 	import Logo from '$lib/design/Logo.svelte';
 	import TitleMorph from './TitleMorph.svelte';
-	import { afterPress } from '$lib/core/shell/press';
+	import { motionMs } from '$lib/core/shell/reducedMotion';
+	import { pressFeedback, releasePress, tryClaimPress } from '$lib/core/shell/press';
 
 	const ARTS = ['art-discover', 'art-practice', 'art-improve'] as const;
 	const TITLE_KEYS = ['ob.s1title', 'ob.s2title', 'ob.s3title'] as const satisfies readonly TIKey[];
 	const TEXT_KEYS = ['ob.s1text', 'ob.s2text', 'ob.s3text'] as const satisfies readonly TIKey[];
 
 	const SLIDE_MS = 4000;
+	/** Exit slide duration — must match the `.leaving` transition below. */
+	const LEAVE_MS = 280;
 
 	let index = $state(0);
+	let leaving = $state(false);
 
 	onMount(() => initRipple());
 
@@ -37,13 +41,27 @@
 		goto(resolve('/home'), { replaceState: true });
 	}
 
-	// Native-style: leave once the CTA press wave has finished.
-	function start() {
-		void afterPress(finish);
+	// Native-style exit: press wave finishes, then the whole page slides
+	// right off (motionMs → instant under reduced motion). Guarded against
+	// double-taps like every other press gate.
+	async function start() {
+		if (leaving || !tryClaimPress()) return;
+		try {
+			await pressFeedback();
+			leaving = true;
+			await new Promise<void>((r) => setTimeout(r, motionMs(LEAVE_MS)));
+			finish();
+		} finally {
+			releasePress();
+		}
 	}
 </script>
 
-<section class="onboarding" aria-label="Présentation">
+<svelte:head>
+	<link rel="preload" as="image" href="/onboarding/ob-1.jpg" />
+</svelte:head>
+
+<section class="onboarding" class:leaving aria-label="Présentation">
 	{#key index}
 		<div class="art {ARTS[index]}" in:fade={{ duration: 600 }} out:fade={{ duration: 600 }}></div>
 	{/key}
@@ -80,90 +98,54 @@
 		overflow: hidden;
 		background: var(--bg);
 	}
-	/* Full-bleed slide layers, crossfading. Placeholder art (token navy,
-	   theme-independent like photos) until real imagery lands. */
+	/* Exit: the whole page slides right off (F7 forward curve, LEAVE_MS).
+	   The app kill-switch makes this instant under reduced motion. */
+	.onboarding.leaving {
+		transform: translateX(102%);
+		transition: transform 280ms cubic-bezier(0, 0.8, 0.3, 1);
+	}
+	/* Full-bleed photo per slide, crossfading. */
 	.art {
 		position: absolute;
 		inset: 0;
+		background-size: cover;
+		background-position: center;
+		background-color: var(--bg);
 	}
 	.art-discover {
-		background:
-			radial-gradient(circle at 82% 18%, rgba(255, 255, 255, 0.22), transparent 34%),
-			radial-gradient(circle at 12% 78%, rgba(143, 179, 234, 0.5), transparent 42%),
-			linear-gradient(165deg, #0b1e42 0%, #1c4da3 62%, #3b78dd 100%);
-	}
-	.art-discover::after {
-		content: '';
-		position: absolute;
-		right: -22%;
-		bottom: 6%;
-		width: 78%;
-		aspect-ratio: 1;
-		border: 2px solid rgba(255, 255, 255, 0.28);
-		border-radius: 50%;
+		background-image: url('/onboarding/ob-1.jpg');
 	}
 	.art-practice {
-		background:
-			radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.2), transparent 36%),
-			radial-gradient(circle, rgba(255, 255, 255, 0.22) 2px, transparent 2.6px),
-			linear-gradient(165deg, #0b1e42 0%, #1c4da3 62%, #3b78dd 100%);
-		background-size:
-			auto,
-			28px 28px,
-			auto;
-	}
-	.art-practice::after {
-		content: '';
-		position: absolute;
-		top: 12%;
-		left: -18%;
-		width: 64%;
-		aspect-ratio: 1;
-		background: radial-gradient(circle, rgba(255, 255, 255, 0.22), transparent 68%);
+		background-image: url('/onboarding/ob-2.jpg');
 	}
 	.art-improve {
-		background:
-			radial-gradient(circle at 85% 80%, rgba(255, 255, 255, 0.18), transparent 38%),
-			linear-gradient(165deg, #0b1e42 0%, #1c4da3 62%, #3b78dd 100%);
+		background-image: url('/onboarding/ob-3.jpg');
 	}
-	.art-improve::before {
-		content: '';
-		position: absolute;
-		bottom: -12%;
-		left: 8%;
-		width: 34%;
-		height: 72%;
-		transform: rotate(24deg);
-		background: linear-gradient(to top, rgba(255, 255, 255, 0.28), transparent);
-		border-radius: var(--r-full);
-	}
-	.art-improve::after {
-		content: '';
-		position: absolute;
-		top: 10%;
-		right: 8%;
-		width: 30%;
-		aspect-ratio: 1;
-		border: 2px solid rgba(255, 255, 255, 0.32);
-		border-radius: 50%;
-	}
-	/* Contrast scrim: transparent high up, opaque brand navy at the bottom
-	   so copy + button stay readable in both themes. */
+	/* Contrast scrim: a top shade keeps the white brand header readable
+	   over the light photos, transparent in the middle to show the
+	   illustration, opaque brand navy at the bottom for copy + button
+	   (both themes). */
 	.scrim {
 		position: absolute;
-		top: 25%;
+		top: 0;
 		right: 0;
 		bottom: 0;
 		left: 0;
-		background: linear-gradient(to bottom, transparent, #1c4da3 72%);
+		background:
+			linear-gradient(to bottom, rgba(11, 30, 66, 0.5), transparent 26%),
+			linear-gradient(to bottom, transparent 42%, #1c4da3 78%);
 	}
 	@media (prefers-color-scheme: dark) {
 		.scrim {
-			background: linear-gradient(to bottom, transparent, #0b1a36 72%);
+			background:
+				linear-gradient(to bottom, rgba(11, 30, 66, 0.55), transparent 26%),
+				linear-gradient(to bottom, transparent 42%, #0b1a36 78%);
 		}
 	}
 	:global(.dark) .scrim {
-		background: linear-gradient(to bottom, transparent, #0b1a36 72%);
+		background:
+			linear-gradient(to bottom, rgba(11, 30, 66, 0.55), transparent 26%),
+			linear-gradient(to bottom, transparent 42%, #0b1a36 78%);
 	}
 	.brand {
 		position: absolute;
