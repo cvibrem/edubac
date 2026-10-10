@@ -1,0 +1,293 @@
+/* Connection-phase shared layout (welcome + login). One stylesheet for both
+   screens so they can't drift apart: centered column, token-driven inputs,
+   segmented picks, navy pill CTA, social tiles, bottom-pinned terms.
+   Everything here references tokens.css — rebrand flows through. */
+
+.auth-page {
+	min-height: 100dvh;
+	display: flex;
+	flex-direction: column;
+	background: var(--bg);
+	color: var(--ink);
+}
+
+.auth-wrap {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: var(--sp-5);
+	width: min(100%, 26rem);
+	margin: 0 auto;
+	padding: max(var(--sp-6), env(safe-area-inset-top, 0px)) var(--pad-page)
+		max(var(--sp-6), env(safe-area-inset-bottom, 0px));
+}
+
+.auth-topbar {
+	display: flex;
+	align-items: center;
+	min-height: 2.75rem;
+}
+
+.auth-back {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.75rem;
+	height: 2.75rem;
+	margin-left: calc(-1 * var(--sp-2));
+	border-radius: var(--r-full);
+	color: var(--ink);
+}
+
+.auth-back svg {
+	width: 1.5rem;
+	height: 1.5rem;
+}
+
+.auth-head h1 {
+	margin: 0 0 var(--sp-1);
+	font-size: var(--fs-display);
+	line-height: var(--lh-tight);
+}
+
+.auth-sub {
+	margin: 0;
+	color: var(--ink-2);
+	font-size: var(--fs-body);
+}
+
+.field {
+	margin: 0;
+	border: none;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--sp-2);
+}
+
+.field > label,
+.field > legend {
+	font-size: var(--fs-small);
+	font-weight: var(--fw-medium);
+	color: var(--ink-2);
+	padding: 0;
+}
+
+/* Text inputs: surface fill, icon slot, password eye slot. */
+.input {
+	display: flex;
+	align-items: center;
+	gap: var(--sp-2);
+	min-height: 3.25rem;
+	padding: 0 var(--sp-4);
+	border-radius: var(--r-lg);
+	background: var(--surface);
+	border: 1px solid var(--line);
+	color: var(--ink-3);
+}
+
+.input:focus-within {
+	border-color: var(--primary);
+	color: var(--primary);
+}
+
+.input input {
+	flex: 1;
+	min-width: 0;
+	border: none;
+	background: transparent;
+	padding: var(--sp-3) 0;
+	font: inherit;
+	color: var(--ink);
+}
+
+.input input::placeholder {
+	color: var(--ink-3);
+}
+
+.input input:focus {
+	outline: none;
+}
+
+.input svg {
+	flex: none;
+	width: 1.25rem;
+	height: 1.25rem;
+}
+
+.icon-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: none;
+	width: 2.5rem;
+	height: 2.5rem;
+	margin-right: calc(-1 * var(--sp-2));
+	border-radius: var(--r-full);
+	color: var(--ink-2);
+}
+
+.icon-btn svg {
+	width: 1.25rem;
+	height: 1.25rem;
+}
+
+.field-error {
+	margin: 0;
+	font-size: var(--fs-small);
+	color: var(--error);
+}
+
+/* Segmented picks (grade, language, theme): checked pill reads primary. */
+.seg {
+	display: flex;
+	gap: var(--sp-1);
+	padding: var(--sp-1);
+	border-radius: var(--r-full);
+	background: var(--surface-2);
+	border: 1px solid var(--line);
+}
+
+.seg label {
+	flex: 1;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 2.75rem;
+	padding: 0 var(--sp-3);
+	border-radius: var(--r-full);
+	font-size: var(--fs-small);
+	font-weight: var(--fw-medium);
+	color: var(--ink-2);
+	cursor: pointer;
+	text-align: center;
+}
+
+.seg label:has(input:checked) {
+	background: var(--primary);
+	color: var(--on-primary);
+}
+
+.seg label:has(input:focus-visible) {
+	outline: 2px solid var(--primary);
+	outline-offset: 2px;
+}
+
+.seg input {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.auth-ctas {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sp-3);
+}
+
+/* Tall CTA, same presence as the onboarding button. */
+.auth-cta {
+	min-height: 3.75rem;
+	font-size: var(--fs-h3);
+	border-radius: var(--r-lg);
+}
+
+/* Visible press wave on near-white buttons. */
+.auth-page .btn-outline .ripple-wave,
+.auth-page .social-btn .ripple-wave {
+	background-image: none;
+	background-color: rgba(28, 77, 163, 0.18);
+	animation: ripple-in 200ms forwards;
+}
+
+.guest-warning {
+	display: flex;
+	gap: var(--sp-2);
+	align-items: flex-start;
+	margin: 0;
+	font-size: var(--fs-small);
+	color: var(--warning);
+}
+
+.guest-warning svg {
+	flex: none;
+	width: 1rem;
+	height: 1rem;
+	margin-top: 0.15rem;
+}
+
+/* "ou" divider with rules. */
+.or-row {
+	display: flex;
+	align-items: center;
+	gap: var(--sp-3);
+	color: var(--ink-3);
+	font-size: var(--fs-small);
+}
+
+.or-row::before,
+.or-row::after {
+	content: '';
+	flex: 1;
+	border-top: 1px solid var(--line-strong);
+}
+
+.social-label {
+	margin: 0;
+	text-align: center;
+	font-size: var(--fs-small);
+	color: var(--ink-2);
+}
+
+.social-row {
+	display: flex;
+	justify-content: center;
+	gap: var(--sp-4);
+}
+
+.social-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 4.5rem;
+	height: 3.75rem;
+	border-radius: var(--r-lg);
+	background: var(--surface-2);
+	border: 1px solid var(--line);
+	color: var(--ink);
+	font-size: var(--fs-h2);
+	font-weight: var(--fw-bold);
+}
+
+.social-btn svg {
+	width: 1.5rem;
+	height: 1.5rem;
+}
+
+.social-g {
+	color: #4285f4;
+}
+
+.social-f {
+	color: #1877f2;
+}
+
+.guest-link {
+	align-self: center;
+	padding: var(--sp-2) var(--sp-3);
+	font-size: var(--fs-small);
+	font-weight: var(--fw-medium);
+	color: var(--primary);
+	border-radius: var(--r-full);
+}
+
+/* Pinned near the bottom: the wrap grows, terms take the leftover. */
+.terms {
+	margin: auto 0 0;
+	padding-top: var(--sp-5);
+	text-align: center;
+	font-size: var(--fs-caption);
+	color: var(--ink-3);
+}

@@ -15,6 +15,8 @@
 	import { overlay } from '$lib/core/overlay/state.svelte';
 	import { isNativePlatform } from '$lib/native/platform';
 	import { hasSeenOnboarding } from '$lib/onboarding/seen';
+	import { hasProfile } from '$lib/profile/store';
+	import '$lib/theme/mode.svelte';
 
 	// Shell boundary: this layout never imports `@capacitor/*` statically.
 	// Native wiring (back button, deep links, splash hide) lives in
@@ -36,6 +38,29 @@
 		// returns here). Covered by the web splash — no visible flash.
 		if (!hasSeenOnboarding() && page.url.pathname !== resolve('/onboarding')) {
 			await goto(resolve('/onboarding'), { replaceState: true });
+			return;
+		}
+
+		// Connection phase: onboarded but no profile (guest or account) and
+		// not already on a connection screen → welcome. Completed profiles
+		// revisiting one-time screens (onboarding, welcome) go home.
+		// /login stays visitable for members (account upgrade / re-login).
+		if (
+			hasSeenOnboarding() &&
+			!hasProfile() &&
+			page.url.pathname !== resolve('/onboarding') &&
+			page.url.pathname !== resolve('/welcome') &&
+			page.url.pathname !== resolve('/login')
+		) {
+			await goto(resolve('/welcome'), { replaceState: true });
+			return;
+		}
+		if (
+			hasProfile() &&
+			(page.url.pathname === resolve('/onboarding') || page.url.pathname === resolve('/welcome'))
+		) {
+			await goto(resolve('/home'), { replaceState: true });
+			return;
 		}
 
 		if (isNativePlatform()) {

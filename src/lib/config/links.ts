@@ -10,4 +10,4 @@ export const APP_SCHEMES = ['edubac'] as const;
 export const APP_HOSTS = ['edubac.app'] as const;
 
 /** Non-tab in-app paths a link may land on. Tabs are always allowed. */
-export const EXTRA_LINK_PATHS = ['/login', '/onboarding'] as const;
+export const EXTRA_LINK_PATHS = ['/login', '/onboarding', '/welcome'] as const;

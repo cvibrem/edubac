@@ -38,7 +38,7 @@
 
 	function finish() {
 		markOnboardingSeen();
-		goto(resolve('/home'), { replaceState: true });
+		goto(resolve('/welcome'), { replaceState: true });
 	}
 
 	// Native-style exit: press wave finishes, then the whole page slides

@@ -127,3 +127,27 @@
 	--warning: #fbbf24;
 	--error: #f87171;
 }
+
+/* Manual light pin (theme choice): same source as :root, so picking
+   "Clair" on a dark OS still renders light. Loaded after the media
+   query, same specificity — wins exactly like `.dark` does. */
+.light {
+	--bg: #edf0f5;
+	--surface: #f8f9fb;
+	--surface-2: #eff2f7;
+	--surface-3: #e2e7ef;
+	--ink: #17171c;
+	--ink-2: #5d5d6b;
+	--ink-3: #9a9aa8;
+	--line: rgba(28, 77, 163, 0.1);
+	--line-strong: rgba(28, 77, 163, 0.22);
+
+	--primary: #1c4da3;
+	--on-primary: #f7f9fd;
+	--primary-soft: #e3eaf7;
+	--on-primary-soft: #173e85;
+
+	--success: #15803d;
+	--warning: #b45309;
+	--error: #b3261e;
+}

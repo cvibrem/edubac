@@ -1,7 +1,7 @@
 import { expect, type Page } from '@playwright/test';
 
-/** Boot to a ready tab screen: through the web splash (+ onboarding on
- *  fresh profiles), onto the home tab. */
+/** Boot to a ready tab screen: through the web splash (+ onboarding and
+ *  the welcome step on fresh profiles), onto the home tab. */
 export async function waitForApp(page: Page) {
 	await page.goto('/', { waitUntil: 'networkidle' });
 	// Web splash covers first paint (native hides the system drawable instead).
@@ -10,6 +10,15 @@ export async function waitForApp(page: Page) {
 	const cta = page.locator('.onboarding .cta');
 	if (await cta.isVisible().catch(() => false)) {
 		await cta.click();
+		// The CTA plays its press wave + slide-left exit before routing.
+		await page.waitForURL(/\/welcome$/, { timeout: 10000 });
+	}
+	// Onboarded but no connection profile lands on welcome — go in as guest.
+	const guestName = page.locator('[data-testid="welcome-name"]');
+	if (await guestName.isVisible().catch(() => false)) {
+		await guestName.fill('Test');
+		await page.locator('[data-testid="grade-9eme"]').check({ force: true });
+		await page.locator('[data-testid="welcome-guest"]').click();
 	}
 	await expect(page.locator('.bottom-nav')).toBeVisible({ timeout: 10000 });
 }
