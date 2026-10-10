@@ -98,10 +98,10 @@
 		overflow: hidden;
 		background: var(--bg);
 	}
-	/* Exit: the whole page slides right off (F7 forward curve, LEAVE_MS).
+	/* Exit: the whole page slides left off (F7 forward curve, LEAVE_MS).
 	   The app kill-switch makes this instant under reduced motion. */
 	.onboarding.leaving {
-		transform: translateX(102%);
+		transform: translateX(-102%);
 		transition: transform 280ms cubic-bezier(0, 0.8, 0.3, 1);
 	}
 	/* Full-bleed photo per slide, crossfading. */
