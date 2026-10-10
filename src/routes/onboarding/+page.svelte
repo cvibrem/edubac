@@ -52,11 +52,13 @@
 		<div class="copy-stack">
 			<div class="copy" aria-live="polite">
 				<h1><TitleMorph text={t(TITLE_KEYS[index])} /></h1>
-				{#key index}
-					<p in:fade={{ duration: 350 }} out:fade={{ duration: 350 }}>
-						{t(TEXT_KEYS[index])}
-					</p>
-				{/key}
+				<div class="p-stack">
+					{#key index}
+						<p in:fade={{ duration: 350 }} out:fade={{ duration: 350 }}>
+							{t(TEXT_KEYS[index])}
+						</p>
+					{/key}
+				</div>
 			</div>
 		</div>
 		<button type="button" class="btn btn-block ripple cta" onclick={finish}>
@@ -191,6 +193,17 @@
 		display: grid;
 	}
 	.copy {
+		grid-area: 1 / 1;
+	}
+	/* Grid-stacked description crossfade: old + new <p> overlap instead of
+	   stacking in flow (which would grow .copy and shove the h1 upward).
+	   Reserved 3-line height so the h1 never moves when descriptions wrap
+	   to different line counts (body lh 1.5 + the <p> bottom margin). */
+	.p-stack {
+		display: grid;
+		min-height: calc(4.5em + var(--sp-6));
+	}
+	.p-stack p {
 		grid-area: 1 / 1;
 	}
 	.copy h1 {
