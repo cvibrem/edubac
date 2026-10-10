@@ -1,23 +1,23 @@
-<!-- Onboarding-only experiment: letter-diff title morph. Common prefix/suffix
-  stay put; only the changed middle rolls out (up+blur) and in (from below).
+<!-- Onboarding-only experiment: typewriter title morph. The common
+  prefix/suffix never move; the changed middle is backspaced out
+  (right-to-left) then typed in (left-to-right) behind a caret.
   Reduced motion (or its CSS kill-switch) degrades to an instant swap. -->
 <script lang="ts">
+	import { onDestroy, untrack } from 'svelte';
 	import { isReducedMotion } from '$lib/core/shell/reducedMotion';
 
 	let { text }: { text: string } = $props();
 
-	const OUT_MS = 160;
-	const IN_MS = 300;
-	const STAGGER_OUT = 15;
-	const STAGGER_IN = 22;
+	const DEL_MS = 35;
+	const TYPE_MS = 55;
 
 	let prefix = $state('');
 	let mid = $state('');
 	let suffix = $state('');
-	let midState = $state<'idle' | 'out' | 'in'>('idle');
+	let phase = $state<'idle' | 'delete' | 'type'>('idle');
 	let stageMid = $state('');
+	let stageCount = $state(0);
 	let seq = 0;
-	let firstRun = true;
 	let timer: ReturnType<typeof setTimeout> | undefined;
 
 	function diff(a: string, b: string) {
@@ -35,59 +35,78 @@
 		};
 	}
 
-	$effect(() => {
-		const next = text;
-		if (next === prefix + mid + suffix) return;
+	// Last target text (plain field, deliberately non-reactive). The effect
+	// below subscribes to `text` only — all state reads happen inside
+	// untrack() so the morph's own writes can never retrigger it mid-flight
+	// and corrupt the diff.
+	let lastTarget = '';
+
+	function startMorph(next: string) {
+		const shown = prefix + mid + suffix;
+		if (next === shown) return;
 		const my = ++seq;
 		clearTimeout(timer);
-		if (firstRun || isReducedMotion()) {
-			firstRun = false;
+		if (isReducedMotion()) {
 			prefix = next;
 			mid = '';
 			suffix = '';
-			midState = 'idle';
+			phase = 'idle';
 			return;
 		}
-		const d = diff(prefix + mid + suffix, next);
+		const d = diff(shown, next);
 		prefix = d.pre;
 		suffix = d.suf;
+		// Phase 1: backspace the old middle, right-to-left.
 		stageMid = d.oldMid;
-		midState = 'out';
-		timer = setTimeout(
-			() => {
-				if (my !== seq) return;
+		stageCount = [...d.oldMid].length;
+		phase = 'delete';
+		const tickDel = () => {
+			if (my !== seq) return;
+			if (stageCount <= 0) {
+				// Phase 2: type the new middle, left-to-right.
 				stageMid = d.newMid;
-				midState = 'in';
-				timer = setTimeout(
-					() => {
-						if (my !== seq) return;
+				stageCount = 0;
+				phase = 'type';
+				const tickType = () => {
+					if (my !== seq) return;
+					if (stageCount >= [...d.newMid].length) {
 						mid = d.newMid;
 						stageMid = '';
-						midState = 'idle';
-					},
-					IN_MS + [...d.newMid].length * STAGGER_IN + 50
-				);
-			},
-			OUT_MS + [...d.oldMid].length * STAGGER_OUT + 50
-		);
-		return () => clearTimeout(timer);
+						phase = 'idle';
+						return;
+					}
+					stageCount += 1;
+					timer = setTimeout(tickType, TYPE_MS);
+				};
+				timer = setTimeout(tickType, TYPE_MS);
+				return;
+			}
+			stageCount -= 1;
+			timer = setTimeout(tickDel, DEL_MS);
+		};
+		timer = setTimeout(tickDel, DEL_MS);
+	}
+
+	onDestroy(() => clearTimeout(timer));
+
+	$effect(() => {
+		const next = text;
+		if (next === lastTarget) return;
+		lastTarget = next;
+		untrack(() => startMorph(next));
 	});
 </script>
 
 <!-- Full text for screen readers; the animated spans are presentational. -->
 <span class="sr-only">{text}</span>
 <span class="morph" aria-hidden="true"
-	><span class="stable">{prefix}</span>{#if midState === 'out'}<span class="mid"
-			>{#each [...stageMid] as ch, i (i)}<span
-					class="mchar out"
-					style="animation-delay:{i * STAGGER_OUT}ms">{ch}</span
-				>{/each}</span
-		>{:else if midState === 'in'}<span class="mid"
-			>{#each [...stageMid] as ch, i (i)}<span
-					class="mchar in"
-					style="animation-delay:{i * STAGGER_IN}ms">{ch}</span
-				>{/each}</span
-		>{:else}<span class="mid">{mid}</span>{/if}<span class="stable">{suffix}</span></span
+	><span class="stable">{prefix}</span>{#if phase === 'delete'}<span class="mid"
+			>{[...stageMid].slice(0, stageCount).join('')}</span
+		><span class="caret"></span>{:else if phase === 'type'}<span class="mid"
+			>{[...stageMid].slice(0, stageCount).join('')}</span
+		><span class="caret"></span>{:else}<span class="mid">{mid}</span>{/if}<span class="stable"
+		>{suffix}</span
+	></span
 >
 
 <style>
@@ -102,34 +121,18 @@
 	.morph {
 		white-space: pre;
 	}
-	.mchar {
+	.caret {
 		display: inline-block;
-		will-change: transform, opacity;
+		width: 0.09em;
+		height: 1em;
+		margin-bottom: -0.12em;
+		margin-left: 0.04em;
+		background: currentColor;
+		animation: caret-blink 0.9s steps(2, start) infinite;
 	}
-	.mchar.out {
-		animation: morph-out var(--morph-out-ms, 160ms) cubic-bezier(0.5, 0, 0.8, 0.4) forwards;
-	}
-	.mchar.in {
-		/* Framework7 Material forward curve, like the rest of the shell. */
-		animation: morph-in var(--morph-in-ms, 300ms) cubic-bezier(0, 0.8, 0.3, 1) backwards;
-	}
-	@keyframes morph-out {
-		to {
-			transform: translateY(-0.45em);
+	@keyframes caret-blink {
+		50% {
 			opacity: 0;
-			filter: blur(5px);
-		}
-	}
-	@keyframes morph-in {
-		from {
-			transform: translateY(0.5em);
-			opacity: 0;
-			filter: blur(5px);
-		}
-		to {
-			transform: none;
-			opacity: 1;
-			filter: none;
 		}
 	}
 </style>
