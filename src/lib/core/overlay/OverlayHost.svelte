@@ -3,6 +3,7 @@
 	import { fade, fly } from 'svelte/transition';
 	import { overlay, type OverlayEntry } from '$lib/core/overlay/state.svelte';
 	import { motionMs } from '$lib/core/shell/reducedMotion';
+	import { afterPress } from '$lib/core/shell/press';
 	import { t } from '$lib/i18n/index.svelte';
 
 	// Single root host: dialogs center, sheets dock bottom, toasts float
@@ -76,7 +77,7 @@
 								: action.style === 'outline'
 									? 'btn-outline'
 									: 'btn-primary'}"
-							onclick={() => overlay.choose(entry.id, action.value)}
+							onclick={() => void afterPress(() => overlay.choose(entry.id, action.value))}
 						>
 							{action.label}
 						</button>
@@ -87,7 +88,7 @@
 					<button
 						type="button"
 						class="btn ripple btn-primary"
-						onclick={() => overlay.dismiss(entry.id)}
+						onclick={() => void afterPress(() => overlay.dismiss(entry.id))}
 					>
 						{t('overlay.ok')}
 					</button>
@@ -104,7 +105,7 @@
 			class="toast chip ripple"
 			in:fly={{ y: 16, duration: motionMs(200) }}
 			out:fade={{ duration: motionMs(150) }}
-			onclick={() => overlay.dismiss(toast.id)}
+			onclick={() => void afterPress(() => overlay.dismiss(toast.id))}
 		>
 			<span role="status"
 				><strong>{toast.title}</strong>{toast.message ? ` — ${toast.message}` : ''}</span

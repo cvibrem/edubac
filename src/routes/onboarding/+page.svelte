@@ -9,6 +9,7 @@
 	import { t, type TIKey } from '$lib/i18n/index.svelte';
 	import Logo from '$lib/design/Logo.svelte';
 	import TitleMorph from './TitleMorph.svelte';
+	import { afterPress } from '$lib/core/shell/press';
 
 	const ARTS = ['art-discover', 'art-practice', 'art-improve'] as const;
 	const TITLE_KEYS = ['ob.s1title', 'ob.s2title', 'ob.s3title'] as const satisfies readonly TIKey[];
@@ -34,6 +35,11 @@
 	function finish() {
 		markOnboardingSeen();
 		goto(resolve('/home'), { replaceState: true });
+	}
+
+	// Native-style: leave once the CTA press wave has finished.
+	function start() {
+		void afterPress(finish);
 	}
 </script>
 
@@ -61,7 +67,7 @@
 				</div>
 			</div>
 		</div>
-		<button type="button" class="btn btn-block ripple cta" onclick={finish}>
+		<button type="button" class="btn btn-block ripple cta" onclick={start}>
 			{t('ob.start')}
 		</button>
 	</div>

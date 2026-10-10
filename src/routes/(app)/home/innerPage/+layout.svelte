@@ -6,6 +6,7 @@
 	import { switchInnerTab } from '$lib/core/navigation/state.svelte';
 	import { HOME_DETAIL_HREFS } from '$lib/config/tabs';
 	import { STICKY_SWIPE_INNER_TAB } from '$lib/config/motion';
+	import { afterPress } from '$lib/core/shell/press';
 	import { slideIn, slideOut } from '$lib/core/shell/transitions';
 	import { t, type TIKey } from '$lib/i18n/index.svelte';
 	import SwipeZone from '$lib/core/shell/SwipeZone.svelte';
@@ -28,7 +29,7 @@
 	function selectInner(e: MouseEvent, href: string) {
 		if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
 		e.preventDefault();
-		switchInnerTab(innerHrefs, href, page.url.pathname);
+		void afterPress(() => switchInnerTab(innerHrefs, href, page.url.pathname));
 	}
 
 	// Sticky-slide direction, same pattern as the global navDirection:
@@ -50,7 +51,7 @@
 		<button
 			type="button"
 			class="back-btn ripple ripple-light"
-			onclick={() => goBack(asResolved('/home'))}>←</button
+			onclick={() => void afterPress(() => goBack(asResolved('/home')))}>←</button
 		>
 		<span class="inner-title">{t('inner.title')}</span>
 	</div>

@@ -3,6 +3,7 @@
 	import { t } from '$lib/i18n/index.svelte';
 	import { overlay } from '$lib/core/overlay/state.svelte';
 	import { handleDeepLink } from '$lib/core/navigation/deepLinks';
+	import { afterPress, pressLink } from '$lib/core/shell/press';
 
 	// Demo lab for the shell overlays (manual device testing).
 	async function demoDialog() {
@@ -40,22 +41,40 @@
 <div class="demo-page" style="background:#2563eb;">
 	<h1>{t('demo.home.title')}</h1>
 	<p>{t('demo.home.text')}</p>
-	<a class="ripple ripple-light" href={resolve('/home/innerPage')}>{t('demo.home.openInner')}</a>
-	<a class="ripple ripple-light" href={resolve('/login')}>{t('demo.home.goLogin')}</a>
+	<a class="ripple ripple-light" use:pressLink href={resolve('/home/innerPage')}
+		>{t('demo.home.openInner')}</a
+	>
+	<a class="ripple ripple-light" use:pressLink href={resolve('/login')}>{t('demo.home.goLogin')}</a>
 
 	<hr />
 	<p class="lab-title">{t('demo.home.overlayLab')}</p>
 	<div class="lab">
-		<button type="button" class="btn btn-soft ripple" onclick={demoDialog}>
+		<button
+			type="button"
+			class="btn btn-soft ripple"
+			onclick={() => void afterPress(() => void demoDialog())}
+		>
 			{t('demo.home.dlgBtn')}
 		</button>
-		<button type="button" class="btn btn-soft ripple" onclick={demoSheet}>
+		<button
+			type="button"
+			class="btn btn-soft ripple"
+			onclick={() => void afterPress(() => void demoSheet())}
+		>
 			{t('demo.home.sheetBtn')}
 		</button>
-		<button type="button" class="btn btn-soft ripple" onclick={demoToast}>
+		<button
+			type="button"
+			class="btn btn-soft ripple"
+			onclick={() => void afterPress(() => demoToast())}
+		>
 			{t('demo.home.toastBtn')}
 		</button>
-		<button type="button" class="btn btn-soft ripple" onclick={demoDeepLink}>
+		<button
+			type="button"
+			class="btn btn-soft ripple"
+			onclick={() => void afterPress(() => demoDeepLink())}
+		>
 			{t('demo.home.linkBtn')}
 		</button>
 	</div>

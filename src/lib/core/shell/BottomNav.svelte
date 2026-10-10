@@ -3,6 +3,7 @@
 	import { TABS, type TabName } from '$lib/config/tabs';
 	import { switchTab, tabHistory } from '$lib/core/navigation/state.svelte';
 	import { asResolved, type ResolvedPath } from '$lib/core/navigation/paths';
+	import { afterPress } from '$lib/core/shell/press';
 	import { t, type TIKey } from '$lib/i18n/index.svelte';
 
 	// Presentation lives here in the UI — the router config only knows name/href.
@@ -31,7 +32,8 @@
 
 		tapping = true;
 		setTimeout(() => (tapping = false), 400);
-		switchTab(tab.name, page.url.pathname);
+		// Native-style: the tab switches once the press wave has finished.
+		void afterPress(() => switchTab(tab.name, page.url.pathname));
 	}
 </script>
 
