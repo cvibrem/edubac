@@ -171,11 +171,11 @@
 		color: #f7f9fd;
 	}
 	.brand :global(svg) {
-		width: 2rem;
+		width: 2.25rem;
 		height: auto;
 	}
 	.brand span {
-		font-size: var(--fs-h3);
+		font-size: var(--fs-h2);
 		font-weight: var(--fw-bold);
 	}
 	.content {
@@ -197,12 +197,12 @@
 	}
 	.copy h1 {
 		margin: 0 0 var(--sp-2);
-		font-size: clamp(2.5rem, 11vw, 3.5rem);
-		line-height: 1.05;
+		font-size: clamp(2.25rem, 10vw, 3.25rem);
+		line-height: 1.15;
 		color: #f7f9fd;
 	}
 	.copy p {
-		margin: 0 0 var(--sp-6);
+		margin: 0 0 var(--sp-6) var(--sp-1);
 		font-size: var(--fs-body);
 		color: rgba(247, 249, 253, 0.85);
 	}
@@ -217,7 +217,7 @@
 	.cta {
 		width: 100%;
 		min-height: 3.75rem;
-		font-size: var(--fs-body);
+		font-size: var(--fs-h3);
 		font-weight: var(--fw-medium);
 		border-radius: var(--r-lg);
 		background: #f7f9fd;
