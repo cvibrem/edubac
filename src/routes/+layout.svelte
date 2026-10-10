@@ -22,6 +22,11 @@
 	// so the browser build is a plain SPA with zero Capacitor code.
 
 	onMount(async () => {
+		// Drop the static boot splash from app.html: the Svelte Splash (web)
+		// or the system drawable (native) takes over from here with identical
+		// visuals, so the handoff is invisible.
+		document.getElementById('boot-splash')?.remove();
+
 		// Seed once: afterNavigate alone misses the initial `enter` navigation
 		// that mounts this layout (incl. `/` -> `/home` redirect).
 		tabHistory.seed(page.url.pathname);
