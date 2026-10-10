@@ -6,8 +6,17 @@
 	let { onFinished, minDuration = 1200 }: { onFinished: () => void; minDuration?: number } =
 		$props();
 
+	// The static boot splash (app.html) already branded the hydration wait,
+	// so only top up to a full presentation — otherwise the web feels like
+	// two splash screens back to back. performance.now() ≈ time since
+	// navigation start ≈ boot display time. The floor keeps the handoff
+	// from flashing by on fast loads.
+	const TOP_UP_FLOOR_MS = 300;
+	const bootMs = typeof performance === 'undefined' ? 0 : performance.now();
+
 	$effect(() => {
-		const timer = setTimeout(() => onFinished(), minDuration);
+		const waitMs = Math.max(TOP_UP_FLOOR_MS, minDuration - bootMs);
+		const timer = setTimeout(() => onFinished(), waitMs);
 		return () => clearTimeout(timer);
 	});
 </script>
