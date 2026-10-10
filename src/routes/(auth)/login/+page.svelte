@@ -16,20 +16,36 @@
 	let email = $state('');
 	let password = $state('');
 	let showPw = $state(false);
+	let emailError = $state(false);
+	let pwError = $state(false);
+	let emailInput: HTMLInputElement | undefined = $state();
+	let pwInput: HTMLInputElement | undefined = $state();
 
 	onMount(() => initRipple());
 
-	const emailOk = $derived(EMAIL_RE.test(email.trim()));
-	const showEmailHint = $derived(email.length > 0 && !emailOk);
-	const canConnect = $derived(emailOk && password.length > 0);
+	const emailLiveHint = $derived(email.length > 0 && !EMAIL_RE.test(email.trim()));
+	const emailInvalid = $derived(emailError || emailLiveHint);
 
 	// Back returns to welcome mid-flow, home when revisiting as a member.
 	function back() {
 		void afterPress(() => goBack(asResolved(hasProfile() ? '/home' : '/welcome')));
 	}
 
+	// Always enabled: tapping with invalid input shows where to fix
+	// instead of swallowing the press.
 	function connect() {
-		if (!canConnect) return;
+		const okEmail = EMAIL_RE.test(email.trim());
+		const okPw = password.length > 0;
+		emailError = !okEmail;
+		pwError = !okPw;
+		if (!okEmail) {
+			emailInput?.focus();
+			return;
+		}
+		if (!okPw) {
+			pwInput?.focus();
+			return;
+		}
 		void afterPress(() => {
 			completeAccount(getDraft());
 			void goto(resolve('/home'), { replaceState: true });
@@ -60,14 +76,8 @@
 				aria-label={t('login.back')}
 				onclick={back}
 			>
-				<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-					<path
-						d="M15 5l-7 7 7 7"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					/>
+				<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+					<path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
 				</svg>
 			</button>
 		</div>
@@ -80,22 +90,9 @@
 		<div class="field">
 			<label for="login-email">{t('login.email')}</label>
 			<div class="input">
-				<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-					<rect
-						x="3"
-						y="5"
-						width="18"
-						height="14"
-						rx="2"
-						stroke="currentColor"
-						stroke-width="1.8"
-					/>
+				<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
 					<path
-						d="M3.5 7l8.5 6 8.5-6"
-						stroke="currentColor"
-						stroke-width="1.8"
-						stroke-linecap="round"
-						stroke-linejoin="round"
+						d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z"
 					/>
 				</svg>
 				<input
@@ -106,12 +103,14 @@
 					inputmode="email"
 					maxlength={120}
 					placeholder="marie@exemple.ht"
-					aria-invalid={showEmailHint}
-					aria-describedby={showEmailHint ? 'login-email-hint' : undefined}
+					aria-invalid={emailInvalid}
+					aria-describedby={emailInvalid ? 'login-email-hint' : undefined}
+					bind:this={emailInput}
 					bind:value={email}
+					oninput={() => (emailError = false)}
 				/>
 			</div>
-			{#if showEmailHint}
+			{#if emailInvalid}
 				<p class="field-error" id="login-email-hint" role="alert">{t('login.badEmail')}</p>
 			{/if}
 		</div>
@@ -119,17 +118,10 @@
 		<div class="field">
 			<label for="login-password">{t('login.password')}</label>
 			<div class="input">
-				<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-					<rect
-						x="5"
-						y="10"
-						width="14"
-						height="10"
-						rx="2"
-						stroke="currentColor"
-						stroke-width="1.8"
+				<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+					<path
+						d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"
 					/>
-					<path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="1.8" />
 				</svg>
 				<input
 					id="login-password"
@@ -138,7 +130,11 @@
 					autocomplete="current-password"
 					maxlength={120}
 					placeholder="••••••••"
+					aria-invalid={pwError}
+					aria-describedby={pwError ? 'login-password-hint' : undefined}
+					bind:this={pwInput}
 					bind:value={password}
+					oninput={() => (pwError = false)}
 				/>
 				<button
 					type="button"
@@ -149,33 +145,25 @@
 					onclick={() => (showPw = !showPw)}
 				>
 					{#if showPw}
-						<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+						<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
 							<path
-								d="M3 3l18 18"
-								stroke="currentColor"
-								stroke-width="1.8"
-								stroke-linecap="round"
-							/>
-							<path
-								d="M10.6 5.2A9.8 9.8 0 0 1 12 5c5 0 9 4.5 10 7-.3.8-1.1 2-2.4 3.3M6.6 6.6C4 8.2 2.5 10.7 2 12c1 2.5 5 7 10 7 1.5 0 2.9-.4 4.1-1"
-								stroke="currentColor"
-								stroke-width="1.8"
-								stroke-linecap="round"
+								d="M12 6c3.79 0 7.17 2.13 8.82 5.5-.59 1.22-1.42 2.27-2.41 3.12l1.41 1.41c1.39-1.23 2.49-2.77 3.18-4.53C21.27 7.11 17 4 12 4c-1.27 0-2.49.2-3.64.57l1.65 1.65C10.66 6.09 11.32 6 12 6zm-1.07 1.14L13 9.21c.57.25 1.03.71 1.28 1.28l2.07 2.07c.08-.34.14-.7.14-1.07C16.5 9.01 14.48 7 12 7c-.37 0-.72.05-1.07.14zM2.01 3.87l2.68 2.68C3.06 7.83 1.77 9.53 1 11.5 2.73 15.89 7 19 12 19c1.52 0 2.98-.29 4.32-.82l3.42 3.42 1.41-1.41L3.42 2.45 2.01 3.87zm7.5 7.5l2.61 2.61c-.04.01-.08.02-.12.02-1.38 0-2.5-1.12-2.5-2.5 0-.05.01-.08.01-.13zm-3.4-3.4l1.75 1.75c-.23.55-.36 1.15-.36 1.78 0 2.48 2.02 4.5 4.5 4.5.63 0 1.23-.13 1.77-.36l.98.98c-.88.24-1.8.38-2.75.38-3.79 0-7.17-2.13-8.82-5.5.7-1.43 1.72-2.61 2.93-3.53z"
 							/>
 						</svg>
 					{:else}
-						<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+						<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
 							<path
-								d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"
-								stroke="currentColor"
-								stroke-width="1.8"
-								stroke-linejoin="round"
+								d="M12 6c3.79 0 7.17 2.13 8.82 5.5C19.17 14.87 15.79 17 12 17s-7.17-2.13-8.82-5.5C4.83 8.13 8.21 6 12 6m0-2C7 4 2.73 7.11 1 11.5 2.73 15.89 7 19 12 19s9.27-3.11 11-7.5C21.27 7.11 17 4 12 4zm0 5c1.38 0 2.5 1.12 2.5 2.5S13.38 14 12 14s-2.5-1.12-2.5-2.5S10.62 9 12 9m0-2c-2.48 0-4.5 2.02-4.5 4.5S9.52 16 12 16s4.5-2.02 4.5-4.5S14.48 7 12 7z"
 							/>
-							<circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8" />
 						</svg>
 					{/if}
 				</button>
 			</div>
+			{#if pwError}
+				<p class="field-error" id="login-password-hint" role="alert">
+					{t('login.passwordRequired')}
+				</p>
+			{/if}
 		</div>
 
 		<div class="auth-ctas">
@@ -183,7 +171,6 @@
 				type="button"
 				class="btn btn-primary btn-block auth-cta ripple"
 				data-testid="login-submit"
-				disabled={!canConnect}
 				onclick={connect}
 			>
 				{t('login.submit')}

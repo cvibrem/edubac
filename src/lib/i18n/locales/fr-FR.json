@@ -55,6 +55,7 @@
 	"welcome.subtitle": "Faisons connaissance d'abord",
 	"welcome.nameLabel": "Ton prénom",
 	"welcome.namePlaceholder": "Ex. Marie",
+	"welcome.nameRequired": "Entre ton prénom pour continuer",
 	"welcome.gradeLabel": "Ta classe",
 	"welcome.grade9": "9ème",
 	"welcome.gradeNs": "NS4 (Terminale)",
@@ -81,5 +82,6 @@
 	"login.tiktok": "TikTok",
 	"login.soon": "Bientôt disponible",
 	"login.soonMessage": "Cette connexion arrivera bientôt.",
-	"login.badEmail": "Adresse e-mail invalide"
+	"login.badEmail": "Adresse e-mail invalide",
+	"login.passwordRequired": "Entre ton mot de passe"
 }

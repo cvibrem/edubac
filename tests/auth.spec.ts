@@ -19,21 +19,25 @@ test('welcome collects answers and continues as guest', async ({ page }) => {
 	await expect(page).toHaveURL(/\/welcome$/);
 	await expect(page.locator('.auth-head h1')).toHaveText('Hello Stranger !');
 
-	// CTAs stay disabled until name + grade are set.
-	await expect(page.locator('[data-testid="welcome-account"]')).toBeDisabled();
-	await expect(page.locator('[data-testid="welcome-guest"]')).toBeDisabled();
+	// CTAs are always enabled: tapping with an empty name shows the error
+	// instead of swallowing the press.
+	await page.locator('[data-testid="welcome-guest"]').click();
+	await expect(page.locator('#welcome-name-error')).toHaveText('Entre ton prénom pour continuer');
+	await expect(page).toHaveURL(/\/welcome$/);
 
 	await page.locator('[data-testid="welcome-name"]').fill('Marie');
-	await page.locator('label:has([data-testid="grade-ns4"])').click();
-	await expect(page.locator('[data-testid="welcome-account"]')).toBeEnabled();
-	await expect(page.locator('[data-testid="welcome-guest"]')).toBeEnabled();
+	// NS4 is preselected; switching proves the dropdown writes through.
+	await expect(page.locator('[data-testid="grade-select"]')).toHaveValue('ns4');
+	await page.locator('[data-testid="grade-select"]').selectOption('ns4');
 
 	// Theme pins immediately (dark class on <html>).
-	await page.locator('label:has([data-testid="theme-dark"])').click();
+	await page.locator('[data-testid="theme-dark"]').click();
 	expect(await page.evaluate(() => document.documentElement.classList.contains('dark'))).toBe(true);
 
-	// Language applies live (title is identical, subtitle localizes).
-	await page.locator('label:has([data-testid="lang-ht-HT"])').click();
+	// Language pill opens the flag menu; picking applies live.
+	await page.locator('[data-testid="pill-lang"]').click();
+	await expect(page.locator('[data-testid="lang-menu"]')).toBeVisible();
+	await page.locator('[data-testid="lang-option-ht-HT"]').click();
 	await expect(page.locator('.auth-sub')).toHaveText('Ann fè konesans dabò');
 
 	await page.locator('[data-testid="welcome-guest"]').click();
@@ -61,7 +65,7 @@ test('account path keeps the draft, back returns, connect finishes', async ({ pa
 	await page.waitForSelector('.splash', { state: 'detached', timeout: 15000 }).catch(() => {});
 
 	await page.locator('[data-testid="welcome-name"]').fill('Jean');
-	await page.locator('label:has([data-testid="grade-9eme"])').click();
+	await page.locator('[data-testid="grade-select"]').selectOption('9eme');
 	await page.locator('[data-testid="welcome-account"]').click();
 	await expect(page).toHaveURL(/\/login$/);
 	await expect(page.locator('.auth-head h1')).toHaveText('Hello Stranger !');
@@ -70,15 +74,21 @@ test('account path keeps the draft, back returns, connect finishes', async ({ pa
 	await page.locator('[data-testid="login-back"]').click();
 	await expect(page).toHaveURL(/\/welcome$/);
 	await expect(page.locator('[data-testid="welcome-name"]')).toHaveValue('Jean');
+	await expect(page.locator('[data-testid="grade-select"]')).toHaveValue('9eme');
 
 	// Forward again, then validate the login form.
 	await page.locator('[data-testid="welcome-account"]').click();
 	await expect(page).toHaveURL(/\/login$/);
-	await expect(page.locator('[data-testid="login-submit"]')).toBeDisabled();
+
+	// Empty submit flags both fields and stays put.
+	await page.locator('[data-testid="login-submit"]').click();
+	await expect(page.getByRole('alert').first()).toBeVisible();
+	await expect(page).toHaveURL(/\/login$/);
 
 	await page.locator('[data-testid="login-email"]').fill('pas-un-mail');
-	await expect(page.locator('[data-testid="login-submit"]')).toBeDisabled();
-	await expect(page.getByRole('alert')).toHaveText('Adresse e-mail invalide');
+	await page.locator('[data-testid="login-submit"]').click();
+	await expect(page.locator('#login-email-hint')).toHaveText('Adresse e-mail invalide');
+	await expect(page).toHaveURL(/\/login$/);
 
 	await page.locator('[data-testid="login-email"]').fill('jean@exemple.ht');
 	// Password eye toggles the field type.

@@ -17,7 +17,7 @@ export async function waitForApp(page: Page) {
 	const guestName = page.locator('[data-testid="welcome-name"]');
 	if (await guestName.isVisible().catch(() => false)) {
 		await guestName.fill('Test');
-		await page.locator('[data-testid="grade-9eme"]').check({ force: true });
+		await page.locator('[data-testid="grade-select"]').selectOption('9eme');
 		await page.locator('[data-testid="welcome-guest"]').click();
 	}
 	await expect(page.locator('.bottom-nav')).toBeVisible({ timeout: 10000 });
