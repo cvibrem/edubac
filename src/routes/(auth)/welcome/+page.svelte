@@ -17,6 +17,7 @@
 	let nameError = $state(false);
 	let langOpen = $state(false);
 	let nameInput: HTMLInputElement | undefined = $state();
+	let focused = $state(false);
 
 	// Day-part greeting from the device hour (06:00–17:59 → day).
 	const isDay = (() => {
@@ -28,6 +29,9 @@
 		}
 	})();
 	const knownName = $derived(name.trim());
+	// The header caret blinks whenever typing is live (focused) or invited
+	// (empty) — it rests only once the field is left holding a name.
+	const caretVisible = $derived(focused || !knownName);
 
 	onMount(() => {
 		initRipple();
@@ -39,6 +43,16 @@
 		const draft = getDraft();
 		name = draft.name;
 		grade = draft.grade ?? 'ns4';
+		// Desktop nicety: land ready to type (no keyboard exists to pop).
+		// Touch devices skip this — any programmatic focus summons the
+		// OS keyboard, which we explicitly don't want on arrival.
+		try {
+			if (window.matchMedia?.('(pointer: fine)').matches) {
+				nameInput?.focus({ preventScroll: true });
+			}
+		} catch {
+			// Never block arrival on a focus nicety.
+		}
 	});
 
 	const currentFlag = $derived(
@@ -185,13 +199,12 @@
 			<p class="eyebrow">{t('welcome.subtitle')}</p>
 			<h1>
 				<span class="hi-day">{t(isDay ? 'welcome.day' : 'welcome.evening')}</span>
-				{#if knownName}
-					<span class="hi-who known" aria-live="polite">{knownName} !</span>
-				{:else}
-					<span class="hi-who unknown" aria-live="polite"
-						>{t('welcome.stranger')}<span class="caret" aria-hidden="true"></span></span
-					>
-				{/if}
+				<span class="hi-who" class:unknown={!knownName} aria-live="polite"
+					>{knownName ? `${knownName} !` : t('welcome.stranger')}{#if caretVisible}<span
+							class="caret"
+							aria-hidden="true"
+						></span>{/if}</span
+				>
 			</h1>
 		</header>
 
@@ -215,6 +228,8 @@
 					bind:this={nameInput}
 					bind:value={name}
 					oninput={() => (nameError = false)}
+					onfocus={() => (focused = true)}
+					onblur={() => (focused = false)}
 				/>
 			</div>
 			{#if nameError}

@@ -24,6 +24,15 @@ test('welcome collects answers and continues as guest', async ({ page }) => {
 	await expect(page.locator('.hi-day')).toHaveText(dayGreeting);
 	await expect(page.locator('.hi-who')).toHaveText("L'inconnu !");
 
+	// Desktop arrival lands focused (no keyboard to pop); the caret blinks
+	// while empty, focused or not — it rests only on blur-with-text.
+	expect(
+		await page.evaluate(() => (document.activeElement as HTMLElement | null)?.dataset?.testid)
+	).toBe('welcome-name');
+	await expect(page.locator('.caret')).toBeVisible();
+	await page.locator('.hi-day').click();
+	await expect(page.locator('.caret')).toBeVisible();
+
 	// CTAs are always enabled: tapping with an empty name shows the error
 	// instead of swallowing the press.
 	await page.locator('[data-testid="welcome-guest"]').click();
@@ -33,6 +42,17 @@ test('welcome collects answers and continues as guest', async ({ page }) => {
 	await page.locator('[data-testid="welcome-name"]').fill('Marie');
 	// The header slot follows the typing live.
 	await expect(page.locator('.hi-who')).toHaveText('Marie !');
+	await expect(page.locator('.caret')).toBeVisible();
+	await page.locator('.hi-day').click();
+	await expect(page.locator('.caret')).toHaveCount(0);
+
+	// Guest warning: one short line.
+	await expect(page.locator('.guest-warning')).toHaveText("En invité, rien n'est sauvegardé.");
+	const warnLines = await page.evaluate(() => {
+		const el = document.querySelector('.guest-warning') as HTMLElement;
+		return el.scrollHeight / parseFloat(getComputedStyle(el).lineHeight);
+	});
+	expect(warnLines).toBeLessThanOrEqual(2);
 	// NS4 is preselected; switching proves the dropdown writes through.
 	await expect(page.locator('[data-testid="grade-select"]')).toHaveValue('ns4');
 	await page.locator('[data-testid="grade-select"]').selectOption('ns4');

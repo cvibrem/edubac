@@ -80,7 +80,7 @@
 	"welcome.themeDark": "Sombre",
 	"welcome.account": "Continuer avec un compte",
 	"welcome.guest": "Continuer en invité",
-	"welcome.guestWarning": "En invité, tout reste accessible, mais rien n'est sauvegardé ailleurs que sur cet appareil : si les données de l'application sont effacées, votre progression sera perdue.",
+	"welcome.guestWarning": "En invité, rien n'est sauvegardé.",
 	"login.back": "Retour",
 	"login.title": "Hello Stranger !",
 	"login.subtitle": "Connecte-toi pour continuer",
