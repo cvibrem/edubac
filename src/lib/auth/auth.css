@@ -70,6 +70,21 @@
 	border-radius: 2px;
 }
 
+/* Flag fills the pill edge to edge: no padding, fixed height, the pill's
+   own rounding clips the (rounded) flag. */
+.lang-pill {
+	height: 2.5rem;
+	padding: 0;
+	overflow: hidden;
+}
+
+.lang-pill .flag {
+	display: block;
+	width: auto;
+	height: 100%;
+	border-radius: 0;
+}
+
 .theme-pill {
 	min-height: 2.5rem;
 	gap: var(--sp-1);
@@ -90,6 +105,17 @@
    the others fall back to the disabled grey. */
 .theme-pill button[aria-pressed='true'] {
 	color: var(--ink);
+}
+
+.theme-pill svg {
+	width: 1.125rem;
+	height: 1.125rem;
+}
+
+/* Material icons are solid fills (no stroke to thin), so inactive weight
+   drops via opacity — same gesture, feasible material. */
+.theme-pill button:not([aria-pressed='true']) svg {
+	opacity: 0.55;
 }
 
 /* Anchored language menu: card under the pill, flag + label rows,

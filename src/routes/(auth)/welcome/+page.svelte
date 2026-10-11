@@ -88,7 +88,7 @@
 			<div class="lang-wrap">
 				<button
 					type="button"
-					class="pill ripple"
+					class="pill lang-pill ripple"
 					data-testid="pill-lang"
 					aria-haspopup="menu"
 					aria-expanded={langOpen}
