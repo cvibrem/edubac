@@ -71,7 +71,12 @@
 }
 
 /* Flag fills the pill edge to edge: square, fully round, cover crop. */
+/* Block-level flex (not inline): no baseline strut inflating .lang-wrap,
+   so both pills center on the same axis. */
 .lang-pill {
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	width: 2.5rem;
 	height: 2.5rem;
 	padding: 0;
@@ -424,9 +429,11 @@
 	border-radius: var(--r-full);
 }
 
-/* Pinned near the bottom: the wrap grows, terms take the leftover. */
+/* Pinned near the bottom: the wrap grows, terms take the leftover.
+   Slightly inset (90%) so the small print doesn't span edge to edge. */
 .terms {
-	margin: auto 0 0;
+	width: 90%;
+	margin: auto auto 0;
 	padding-top: var(--sp-5);
 	text-align: center;
 	font-size: var(--fs-caption);
