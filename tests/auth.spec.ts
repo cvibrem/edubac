@@ -14,10 +14,15 @@ test('welcome collects answers and continues as guest', async ({ page }) => {
 	const errors = trackErrors(page);
 	await throughSplash(page);
 
-	// Onboarding first, then the welcome step.
+	// Onboarding first, then the welcome step: eyebrow over the
+	// time-based greeting, name slot unknown.
 	await page.locator('.onboarding .cta').click();
 	await expect(page).toHaveURL(/\/welcome$/);
-	await expect(page.locator('.auth-head h1')).toHaveText('Hello Stranger !');
+	await expect(page.locator('.eyebrow')).toHaveText("Faisons connaissance d'abord");
+	const dayGreeting =
+		new Date().getHours() >= 6 && new Date().getHours() < 18 ? 'Bonjour,' : 'Bonsoir,';
+	await expect(page.locator('.hi-day')).toHaveText(dayGreeting);
+	await expect(page.locator('.hi-who')).toHaveText("L'inconnu !");
 
 	// CTAs are always enabled: tapping with an empty name shows the error
 	// instead of swallowing the press.
@@ -26,6 +31,8 @@ test('welcome collects answers and continues as guest', async ({ page }) => {
 	await expect(page).toHaveURL(/\/welcome$/);
 
 	await page.locator('[data-testid="welcome-name"]').fill('Marie');
+	// The header slot follows the typing live.
+	await expect(page.locator('.hi-who')).toHaveText('Marie !');
 	// NS4 is preselected; switching proves the dropdown writes through.
 	await expect(page.locator('[data-testid="grade-select"]')).toHaveValue('ns4');
 	await page.locator('[data-testid="grade-select"]').selectOption('ns4');
@@ -51,7 +58,7 @@ test('welcome collects answers and continues as guest', async ({ page }) => {
 	await page.locator('[data-testid="pill-lang"]').click();
 	await expect(page.locator('[data-testid="lang-menu"]')).toBeVisible();
 	await page.locator('[data-testid="lang-option-ht-HT"]').click();
-	await expect(page.locator('.auth-sub')).toHaveText('Ann fè konesans dabò');
+	await expect(page.locator('.eyebrow')).toHaveText('Ann fè konesans dabò');
 
 	await page.locator('[data-testid="welcome-guest"]').click();
 	await expect(page).toHaveURL(/\/home$/);
@@ -84,6 +91,8 @@ test('account path keeps the draft, back returns, connect finishes', async ({ pa
 	// The push holds both pages until the outro settles.
 	await expect(page.locator('.auth-stack')).toHaveCount(1);
 	await expect(page.locator('.auth-head h1')).toHaveText('Hello Stranger !');
+	// The subtitle greets by the draft name.
+	await expect(page.locator('.auth-sub')).toHaveText('Connecte-toi pour continuer, Jean !');
 
 	// Back returns to welcome with the answers intact (draft restore).
 	await page.locator('[data-testid="login-back"]').click();

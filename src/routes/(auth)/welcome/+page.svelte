@@ -18,6 +18,17 @@
 	let langOpen = $state(false);
 	let nameInput: HTMLInputElement | undefined = $state();
 
+	// Day-part greeting from the device hour (06:00–17:59 → day).
+	const isDay = (() => {
+		try {
+			const h = new Date().getHours();
+			return h >= 6 && h < 18;
+		} catch {
+			return true;
+		}
+	})();
+	const knownName = $derived(name.trim());
+
 	onMount(() => {
 		initRipple();
 		// One-time setup: completed profiles never see this screen.
@@ -171,12 +182,20 @@
 		</div>
 
 		<header class="auth-head">
-			<h1>{t('welcome.title')}</h1>
-			<p class="auth-sub">{t('welcome.subtitle')}</p>
+			<p class="eyebrow">{t('welcome.subtitle')}</p>
+			<h1>
+				<span class="hi-day">{t(isDay ? 'welcome.day' : 'welcome.evening')}</span>
+				{#if knownName}
+					<span class="hi-who known" aria-live="polite">{knownName} !</span>
+				{:else}
+					<span class="hi-who unknown" aria-live="polite"
+						>{t('welcome.stranger')}<span class="caret" aria-hidden="true"></span></span
+					>
+				{/if}
+			</h1>
 		</header>
 
 		<div class="field">
-			<label for="welcome-name">{t('welcome.nameLabel')}</label>
 			<div class="input">
 				<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
 					<path
@@ -189,6 +208,7 @@
 					type="text"
 					autocomplete="given-name"
 					maxlength={40}
+					aria-label={t('welcome.nameLabel')}
 					placeholder={t('welcome.namePlaceholder')}
 					aria-invalid={nameError}
 					aria-describedby={nameError ? 'welcome-name-error' : undefined}
@@ -204,15 +224,19 @@
 			{/if}
 		</div>
 
-		<div class="field">
-			<label for="grade-select">{t('welcome.gradeLabel')}</label>
+		<div class="field grade-field">
 			<div class="input select-wrap">
 				<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
 					<path
 						d="M12 3 1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"
 					/>
 				</svg>
-				<select id="grade-select" data-testid="grade-select" bind:value={grade}>
+				<select
+					id="grade-select"
+					data-testid="grade-select"
+					aria-label={t('welcome.gradeLabel')}
+					bind:value={grade}
+				>
 					<option value="ns4">{t('welcome.gradeNs')}</option>
 					<option value="9eme">{t('welcome.grade9')}</option>
 				</select>

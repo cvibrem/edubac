@@ -239,6 +239,53 @@
 	line-height: var(--lh-tight);
 }
 
+.eyebrow {
+	margin: 0 0 var(--sp-2);
+	font-size: var(--fs-small);
+	font-weight: var(--fw-medium);
+	color: var(--ink-2);
+}
+
+/* Live greeting: day part over the name slot, one line each. */
+.hi-day,
+.hi-who {
+	display: block;
+	font-size: clamp(2.25rem, 11vw, 3rem);
+	line-height: 1.12;
+}
+
+.hi-who {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.hi-who.unknown {
+	color: var(--ink-3);
+}
+
+.caret {
+	display: inline-block;
+	width: 3px;
+	height: 1em;
+	margin-left: 4px;
+	background: currentColor;
+	vertical-align: -0.12em;
+	animation: caret-blink 1.1s steps(2, start) infinite;
+}
+
+@keyframes caret-blink {
+	50% {
+		opacity: 0;
+	}
+}
+
+/* Grade picker stays narrow (short labels fit 40vw). */
+.grade-field {
+	width: 40vw;
+	max-width: 100%;
+}
+
 .auth-sub {
 	margin: 0;
 	color: var(--ink-2);

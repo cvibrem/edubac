@@ -22,6 +22,9 @@
 	let emailInput: HTMLInputElement | undefined = $state();
 	let pwInput: HTMLInputElement | undefined = $state();
 
+	// Known from the welcome draft: greet by name when we have it.
+	const draftName = getDraft().name.trim();
+
 	onMount(() => initRipple());
 
 	const emailLiveHint = $derived(email.length > 0 && !EMAIL_RE.test(email.trim()));
@@ -78,7 +81,7 @@
 
 		<header class="auth-head">
 			<h1>{t('login.title')}</h1>
-			<p class="auth-sub">{t('login.subtitle')}</p>
+			<p class="auth-sub">{t('login.subtitle')}{draftName ? `, ${draftName} !` : ''}</p>
 		</header>
 
 		<div class="field">
