@@ -420,15 +420,6 @@
 	color: #1877f2;
 }
 
-.guest-link {
-	align-self: center;
-	padding: var(--sp-2) var(--sp-3);
-	font-size: var(--fs-small);
-	font-weight: var(--fw-medium);
-	color: var(--primary);
-	border-radius: var(--r-full);
-}
-
 /* Pinned near the bottom: the wrap grows, terms take the leftover.
    Slightly inset (90%) so the small print doesn't span edge to edge. */
 .terms {

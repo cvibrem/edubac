@@ -5,7 +5,6 @@
 	import { goBack } from '$lib/core/navigation/back';
 	import { asResolved } from '$lib/core/navigation/paths';
 	import { t } from '$lib/i18n/index.svelte';
-	import TermsFooter from '$lib/auth/TermsFooter.svelte';
 	import '$lib/auth/auth.css';
 
 	onMount(() => initRipple());
@@ -33,7 +32,5 @@
 		<p class="auth-sub">{t('terms.p1')}</p>
 		<p class="auth-sub">{t('terms.p2')}</p>
 		<p class="auth-sub">{t('terms.p3')}</p>
-
-		<TermsFooter />
 	</div>
 </main>

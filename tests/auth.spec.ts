@@ -124,7 +124,7 @@ test('account path keeps the draft, back returns, connect finishes', async ({ pa
 	expect(errors).toEqual([]);
 });
 
-test('login guest escape and social placeholders', async ({ page }) => {
+test('login social buttons are placeholders', async ({ page }) => {
 	const errors = trackErrors(page);
 	await page.addInitScript(() => localStorage.setItem('edubac.onboarded', '1'));
 	await page.goto('/login', { waitUntil: 'networkidle' });
@@ -135,10 +135,9 @@ test('login guest escape and social placeholders', async ({ page }) => {
 	await expect(page.locator('.toast')).toBeVisible({ timeout: 5000 });
 	await expect(page).toHaveURL(/\/login$/);
 
-	// The escape hatch still lets guests in from the second screen.
-	await page.locator('[data-testid="login-guest"]').click();
-	await expect(page).toHaveURL(/\/home$/);
-	await expect(page.locator('.bottom-nav')).toBeVisible();
+	// No guest escape here: it lives on welcome only, so account
+	// creation stays the obvious path.
+	await expect(page.locator('[data-testid="login-guest"]')).toHaveCount(0);
 
 	expect(errors).toEqual([]);
 });

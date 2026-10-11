@@ -8,7 +8,7 @@
 	import { asResolved } from '$lib/core/navigation/paths';
 	import { overlay } from '$lib/core/overlay/state.svelte';
 	import { t } from '$lib/i18n/index.svelte';
-	import { completeAccount, completeGuest, getDraft, hasProfile } from '$lib/profile/store';
+	import { completeAccount, getDraft, hasProfile } from '$lib/profile/store';
 	import TermsFooter from '$lib/auth/TermsFooter.svelte';
 	import '$lib/auth/auth.css';
 
@@ -49,13 +49,6 @@
 		}
 		void afterPress(() => {
 			completeAccount(getDraft());
-			void goto(resolve('/home'), { replaceState: true });
-		});
-	}
-
-	function continueAsGuest() {
-		void afterPress(() => {
-			completeGuest(getDraft());
 			void goto(resolve('/home'), { replaceState: true });
 		});
 	}
@@ -213,15 +206,6 @@
 				</svg>
 			</button>
 		</div>
-
-		<button
-			type="button"
-			class="guest-link ripple"
-			data-testid="login-guest"
-			onclick={continueAsGuest}
-		>
-			{t('welcome.guest')}
-		</button>
 
 		<TermsFooter />
 	</div>
