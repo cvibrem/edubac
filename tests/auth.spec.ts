@@ -81,11 +81,14 @@ test('account path keeps the draft, back returns, connect finishes', async ({ pa
 	await page.locator('[data-testid="grade-select"]').selectOption('9eme');
 	await page.locator('[data-testid="welcome-account"]').click();
 	await expect(page).toHaveURL(/\/login$/);
+	// The push holds both pages until the outro settles.
+	await expect(page.locator('.auth-stack')).toHaveCount(1);
 	await expect(page.locator('.auth-head h1')).toHaveText('Hello Stranger !');
 
 	// Back returns to welcome with the answers intact (draft restore).
 	await page.locator('[data-testid="login-back"]').click();
 	await expect(page).toHaveURL(/\/welcome$/);
+	await expect(page.locator('.auth-stack')).toHaveCount(1);
 	await expect(page.locator('[data-testid="welcome-name"]')).toHaveValue('Jean');
 	await expect(page.locator('[data-testid="grade-select"]')).toHaveValue('9eme');
 
@@ -142,6 +145,52 @@ test('login social buttons are placeholders', async ({ page }) => {
 	expect(errors).toEqual([]);
 });
 
+test('auth screens push left forward and pop back', async ({ page }) => {
+	const errors = trackErrors(page);
+	await page.addInitScript(() => localStorage.setItem('edubac.onboarded', '1'));
+	await page.goto('/welcome', { waitUntil: 'networkidle' });
+	await page.waitForSelector('.splash', { state: 'detached', timeout: 15000 }).catch(() => {});
+	await page.locator('[data-testid="welcome-name"]').fill('Marie');
+
+	// Sample the incoming stack mid-flight: forward push slides it in
+	// from the right (positive tx), back pop from the left (negative).
+	async function incomingTx(sign: 1 | -1): Promise<number> {
+		return page.evaluate(
+			(s) =>
+				new Promise<number>((resolveTx) => {
+					const t0 = Date.now();
+					const tick = () => {
+						const stacks = [...document.querySelectorAll('.auth-stack')];
+						const el = stacks[stacks.length - 1] as HTMLElement | undefined;
+						const m = el ? getComputedStyle(el).transform.match(/matrix\(([^)]+)\)/) : null;
+						const tx = parseFloat(m?.[1]?.split(',')[4] ?? '');
+						if (Number.isFinite(tx) && (s === 1 ? tx > 2 : tx < -2)) {
+							resolveTx(tx);
+							return;
+						}
+						if (Date.now() - t0 > 3000) {
+							resolveTx(NaN);
+							return;
+						}
+						requestAnimationFrame(tick);
+					};
+					tick();
+				}),
+			sign
+		);
+	}
+
+	await page.locator('[data-testid="welcome-account"]').click();
+	expect(await incomingTx(1)).toBeGreaterThan(2);
+	await expect(page).toHaveURL(/\/login$/);
+
+	await page.locator('[data-testid="login-back"]').click();
+	expect(await incomingTx(-1)).toBeLessThan(-2);
+	await expect(page).toHaveURL(/\/welcome$/);
+
+	expect(errors).toEqual([]);
+});
+
 test('footer vouvoie and links open the legal pages', async ({ page }) => {
 	const errors = trackErrors(page);
 	await page.addInitScript(() => localStorage.setItem('edubac.onboarded', '1'));
@@ -158,12 +207,14 @@ test('footer vouvoie and links open the legal pages', async ({ page }) => {
 	// Legal pages are readable mid-flow (no profile yet) and link back.
 	await page.locator('[data-testid="terms-link"]').click();
 	await expect(page).toHaveURL(/\/terms$/);
+	await expect(page.locator('.auth-stack')).toHaveCount(1);
 	await expect(page.locator('.auth-head h1')).toHaveText("Conditions d'utilisation");
 	await page.goBack();
 	await expect(page).toHaveURL(/\/welcome$/);
 
 	await page.locator('[data-testid="privacy-link"]').click();
 	await expect(page).toHaveURL(/\/privacy$/);
+	await expect(page.locator('.auth-stack')).toHaveCount(1);
 	await expect(page.locator('.auth-head h1')).toHaveText('Politique de confidentialité');
 
 	expect(errors).toEqual([]);
