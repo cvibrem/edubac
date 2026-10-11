@@ -270,9 +270,10 @@
 			>
 				{t('welcome.account')}
 			</button>
+			<div class="or-row" role="separator"><span>{t('login.or')}</span></div>
 			<button
 				type="button"
-				class="btn btn-outline btn-block ripple"
+				class="btn btn-outline btn-block auth-cta ripple"
 				data-testid="welcome-guest"
 				onclick={goGuest}
 			>

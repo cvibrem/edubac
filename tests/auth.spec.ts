@@ -53,9 +53,19 @@ test('welcome collects answers and continues as guest', async ({ page }) => {
 		return el.scrollHeight / parseFloat(getComputedStyle(el).lineHeight);
 	});
 	expect(warnLines).toBeLessThanOrEqual(2);
+
 	// NS4 is preselected; switching proves the dropdown writes through.
 	await expect(page.locator('[data-testid="grade-select"]')).toHaveValue('ns4');
 	await page.locator('[data-testid="grade-select"]').selectOption('ns4');
+
+	// Separator reads "ou" and both CTAs share one height.
+	await expect(page.locator('.auth-ctas .or-row')).toHaveText('ou');
+	const ctaHeights = await page.evaluate(() => [
+		document.querySelector('[data-testid="welcome-account"]')?.getBoundingClientRect().height ?? 0,
+		document.querySelector('[data-testid="welcome-guest"]')?.getBoundingClientRect().height ?? 0
+	]);
+	expect(ctaHeights[0]).toBe(ctaHeights[1]);
+	expect(ctaHeights[0]).toBeGreaterThan(0);
 
 	// Pills share one height; the flag pill is square, theme glyphs smaller.
 	const pillBox = await page.evaluate(() => {

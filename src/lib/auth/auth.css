@@ -42,6 +42,7 @@
 	align-items: center;
 	gap: var(--sp-2);
 	min-height: 2.75rem;
+	margin-bottom: var(--sp-5);
 }
 
 .topbar-spacer {
