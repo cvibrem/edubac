@@ -70,9 +70,9 @@
 	border-radius: 2px;
 }
 
-/* Flag fills the pill edge to edge: no padding, fixed height, the pill's
-   own rounding clips the (rounded) flag. */
+/* Flag fills the pill edge to edge: square, fully round, cover crop. */
 .lang-pill {
+	width: 2.5rem;
 	height: 2.5rem;
 	padding: 0;
 	overflow: hidden;
@@ -80,8 +80,9 @@
 
 .lang-pill .flag {
 	display: block;
-	width: auto;
+	width: 100%;
 	height: 100%;
+	object-fit: cover;
 	border-radius: 0;
 }
 

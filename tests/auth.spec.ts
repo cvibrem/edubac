@@ -30,12 +30,18 @@ test('welcome collects answers and continues as guest', async ({ page }) => {
 	await expect(page.locator('[data-testid="grade-select"]')).toHaveValue('ns4');
 	await page.locator('[data-testid="grade-select"]').selectOption('ns4');
 
-	// Pills share one height; theme glyphs sit smaller inside.
-	const pillHeights = await page.evaluate(() => [
-		document.querySelector('[data-testid="pill-lang"]')?.getBoundingClientRect().height ?? 0,
-		document.querySelector('.theme-pill')?.getBoundingClientRect().height ?? 0
-	]);
-	expect(pillHeights[0]).toBe(pillHeights[1]);
+	// Pills share one height; the flag pill is square, theme glyphs smaller.
+	const pillBox = await page.evaluate(() => {
+		const lang = document.querySelector('[data-testid="pill-lang"]')?.getBoundingClientRect();
+		const theme = document.querySelector('.theme-pill')?.getBoundingClientRect();
+		return {
+			langW: lang?.width ?? 0,
+			langH: lang?.height ?? 0,
+			themeH: theme?.height ?? 0
+		};
+	});
+	expect(pillBox.langW).toBe(pillBox.langH);
+	expect(pillBox.langH).toBe(pillBox.themeH);
 
 	// Theme pins immediately (dark class on <html>).
 	await page.locator('[data-testid="theme-dark"]').click();
