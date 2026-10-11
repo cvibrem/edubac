@@ -129,3 +129,30 @@ test('login guest escape and social placeholders', async ({ page }) => {
 
 	expect(errors).toEqual([]);
 });
+
+test('footer vouvoie and links open the legal pages', async ({ page }) => {
+	const errors = trackErrors(page);
+	await page.addInitScript(() => localStorage.setItem('edubac.onboarded', '1'));
+	await page.goto('/welcome', { waitUntil: 'networkidle' });
+	await page.waitForSelector('.splash', { state: 'detached', timeout: 15000 }).catch(() => {});
+
+	// Bottom copy uses "vous"; both legal links render.
+	await expect(page.locator('[data-testid="terms-footer"]')).toContainText('vous acceptez');
+	await expect(page.locator('[data-testid="terms-link"]')).toHaveText("conditions d'utilisation");
+	await expect(page.locator('[data-testid="privacy-link"]')).toHaveText(
+		'politique de confidentialité'
+	);
+
+	// Legal pages are readable mid-flow (no profile yet) and link back.
+	await page.locator('[data-testid="terms-link"]').click();
+	await expect(page).toHaveURL(/\/terms$/);
+	await expect(page.locator('.auth-head h1')).toHaveText("Conditions d'utilisation");
+	await page.goBack();
+	await expect(page).toHaveURL(/\/welcome$/);
+
+	await page.locator('[data-testid="privacy-link"]').click();
+	await expect(page).toHaveURL(/\/privacy$/);
+	await expect(page.locator('.auth-head h1')).toHaveText('Politique de confidentialité');
+
+	expect(errors).toEqual([]);
+});

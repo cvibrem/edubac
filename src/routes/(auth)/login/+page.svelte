@@ -9,6 +9,7 @@
 	import { overlay } from '$lib/core/overlay/state.svelte';
 	import { t } from '$lib/i18n/index.svelte';
 	import { completeAccount, completeGuest, getDraft, hasProfile } from '$lib/profile/store';
+	import TermsFooter from '$lib/auth/TermsFooter.svelte';
 	import '$lib/auth/auth.css';
 
 	const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -222,6 +223,6 @@
 			{t('welcome.guest')}
 		</button>
 
-		<p class="terms">{t('auth.terms')}</p>
+		<TermsFooter />
 	</div>
 </main>

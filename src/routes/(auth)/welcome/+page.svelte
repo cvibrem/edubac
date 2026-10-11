@@ -8,6 +8,7 @@
 	import { getLocale, setLocale, t } from '$lib/i18n/index.svelte';
 	import { getTheme, setTheme } from '$lib/theme/mode.svelte';
 	import { completeGuest, getDraft, getProfile, saveDraft, type Grade } from '$lib/profile/store';
+	import TermsFooter from '$lib/auth/TermsFooter.svelte';
 	import '$lib/auth/auth.css';
 
 	let name = $state('');
@@ -95,9 +96,6 @@
 					onclick={() => (langOpen = !langOpen)}
 				>
 					<img class="flag" src={currentFlag} alt="" />
-					<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-						<path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6-1.41-1.41z" />
-					</svg>
 				</button>
 				{#if langOpen}
 					<button
@@ -249,6 +247,6 @@
 			</p>
 		</div>
 
-		<p class="terms">{t('auth.terms')}</p>
+		<TermsFooter />
 	</div>
 </main>

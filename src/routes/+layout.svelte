@@ -44,13 +44,16 @@
 		// Connection phase: onboarded but no profile (guest or account) and
 		// not already on a connection screen → welcome. Completed profiles
 		// revisiting one-time screens (onboarding, welcome) go home.
-		// /login stays visitable for members (account upgrade / re-login).
+		// /login stays visitable for members (account upgrade / re-login);
+		// /terms + /privacy are readable before and after connecting.
 		if (
 			hasSeenOnboarding() &&
 			!hasProfile() &&
 			page.url.pathname !== resolve('/onboarding') &&
 			page.url.pathname !== resolve('/welcome') &&
-			page.url.pathname !== resolve('/login')
+			page.url.pathname !== resolve('/login') &&
+			page.url.pathname !== resolve('/terms') &&
+			page.url.pathname !== resolve('/privacy')
 		) {
 			await goto(resolve('/welcome'), { replaceState: true });
 			return;
