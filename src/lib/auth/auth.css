@@ -45,6 +45,27 @@
 	margin-bottom: var(--sp-5);
 }
 
+/* Vertical-balance experiment (welcome): the core group (greeting +
+   inputs + CTAs) centers in the free space between the top bar and the
+   pinned terms, instead of stacking from the top and stranding a void
+   above the footer on tall screens. */
+.auth-wrap.balance {
+	gap: 0;
+}
+
+.auth-wrap.balance .auth-topbar {
+	margin-bottom: 0;
+}
+
+.auth-core {
+	flex: 1 0 auto;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: var(--sp-5);
+	padding: var(--sp-4) 0;
+}
+
 .topbar-spacer {
 	flex: 1;
 }
