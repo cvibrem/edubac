@@ -94,7 +94,6 @@
 			</header>
 
 			<div class="field">
-				<label for="login-email">{t('login.email')}</label>
 				<div class="input">
 					<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
 						<path
@@ -108,7 +107,8 @@
 						autocomplete="email"
 						inputmode="email"
 						maxlength={120}
-						placeholder="marie@exemple.ht"
+						aria-label={t('login.email')}
+						placeholder={t('login.emailPlaceholder')}
 						aria-invalid={emailInvalid}
 						aria-describedby={emailInvalid ? 'login-email-hint' : undefined}
 						bind:this={emailInput}
@@ -122,7 +122,6 @@
 			</div>
 
 			<div class="field">
-				<label for="login-password">{t('login.password')}</label>
 				<div class="input">
 					<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
 						<path
@@ -135,7 +134,8 @@
 						type={showPw ? 'text' : 'password'}
 						autocomplete="current-password"
 						maxlength={120}
-						placeholder="••••••••"
+						aria-label={t('login.password')}
+						placeholder={t('login.passwordPlaceholder')}
 						aria-invalid={pwError}
 						aria-describedby={pwError ? 'login-password-hint' : undefined}
 						bind:this={pwInput}

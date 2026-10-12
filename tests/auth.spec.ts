@@ -140,6 +140,7 @@ test('account path keeps the draft, back returns, connect finishes', async ({ pa
 	await page.locator('[data-testid="login-submit"]').click();
 	await expect(page.getByRole('alert').first()).toBeVisible();
 	await expect(page).toHaveURL(/\/login$/);
+	await expect(page.locator('[data-testid="login-email"]')).toHaveAttribute('placeholder', 'Email');
 
 	await page.locator('[data-testid="login-email"]').fill('pas-un-mail');
 	await page.locator('[data-testid="login-submit"]').click();
