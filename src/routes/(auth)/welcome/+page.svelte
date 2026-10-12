@@ -2,7 +2,8 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { afterPress } from '$lib/core/shell/press';
+	import { afterPress, pressFeedback, releasePress, tryClaimPress } from '$lib/core/shell/press';
+	import { motionMs } from '$lib/core/shell/reducedMotion';
 	import { initRipple } from '$lib/core/shell/ripple';
 	import { SUPPORTED_LOCALES, type LocaleCode } from '$lib/config/i18n';
 	import { getLocale, setLocale, t } from '$lib/i18n/index.svelte';
@@ -19,6 +20,10 @@
 	let langOpen = $state(false);
 	let nameInput: HTMLInputElement | undefined = $state();
 	let focused = $state(false);
+	// Exit slide to home (guest): press wave, slide left, replace.
+	// LEAVE_MS must match `.auth-page.leaving` in auth.css.
+	const LEAVE_MS = 240;
+	let leaving = $state(false);
 
 	// Day-part greeting from the device hour (see lib/auth/greeting).
 	const dayKey = dayPartKey();
@@ -78,13 +83,22 @@
 		return true;
 	}
 
-	function goGuest() {
+	// Guest exit slides the page left (same gesture as the onboarding
+	// exit): the press wave finishes, the page slides off, then home
+	// replaces it — no back-stack return into the connection flow.
+	async function goGuest() {
+		if (leaving) return;
 		if (needName()) return;
-		const answers = { name, grade };
-		void afterPress(() => {
-			completeGuest(answers);
-			void goto(resolve('/home'), { replaceState: true });
-		});
+		if (!tryClaimPress()) return;
+		try {
+			await pressFeedback();
+			leaving = true;
+			await new Promise<void>((r) => setTimeout(r, motionMs(LEAVE_MS)));
+			completeGuest({ name, grade });
+			await goto(resolve('/home'), { replaceState: true });
+		} finally {
+			releasePress();
+		}
 	}
 
 	function goAccount() {
@@ -100,7 +114,7 @@
 
 <svelte:window onkeydown={onWindowKey} />
 
-<main class="auth-page">
+<main class="auth-page" class:leaving>
 	<div class="auth-wrap balance">
 		<div class="auth-topbar">
 			<span class="topbar-spacer"></span>

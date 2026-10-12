@@ -2,7 +2,8 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { afterPress } from '$lib/core/shell/press';
+	import { afterPress, pressFeedback, releasePress, tryClaimPress } from '$lib/core/shell/press';
+	import { motionMs } from '$lib/core/shell/reducedMotion';
 	import { initRipple } from '$lib/core/shell/ripple';
 	import { goBack } from '$lib/core/navigation/back';
 	import { asResolved } from '$lib/core/navigation/paths';
@@ -22,6 +23,10 @@
 	let pwError = $state(false);
 	let emailInput: HTMLInputElement | undefined = $state();
 	let pwInput: HTMLInputElement | undefined = $state();
+	// Exit slide to home (connect): press wave, slide left, replace.
+	// LEAVE_MS must match `.auth-page.leaving` in auth.css.
+	const LEAVE_MS = 240;
+	let leaving = $state(false);
 
 	// Known from the welcome draft: greet by name when we have it.
 	const draftName = getDraft().name.trim();
@@ -37,8 +42,9 @@
 	}
 
 	// Always enabled: tapping with invalid input shows where to fix
-	// instead of swallowing the press.
-	function connect() {
+	// instead of swallowing the press. Success slides the page left
+	// (same gesture as the guest exit) before home replaces it.
+	async function connect() {
 		const okEmail = EMAIL_RE.test(email.trim());
 		const okPw = password.length > 0;
 		emailError = !okEmail;
@@ -51,10 +57,17 @@
 			pwInput?.focus();
 			return;
 		}
-		void afterPress(() => {
+		if (leaving) return;
+		if (!tryClaimPress()) return;
+		try {
+			await pressFeedback();
+			leaving = true;
+			await new Promise<void>((r) => setTimeout(r, motionMs(LEAVE_MS)));
 			completeAccount(getDraft());
-			void goto(resolve('/home'), { replaceState: true });
-		});
+			await goto(resolve('/home'), { replaceState: true });
+		} finally {
+			releasePress();
+		}
 	}
 
 	function socialSoon() {
@@ -64,7 +77,7 @@
 	}
 </script>
 
-<main class="auth-page">
+<main class="auth-page" class:leaving>
 	<div class="auth-wrap balance">
 		<div class="auth-topbar">
 			<button

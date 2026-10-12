@@ -15,6 +15,14 @@
 	color: var(--ink);
 }
 
+/* Exit to home (guest/connect): the whole page slides left off, same
+   gesture as the onboarding exit (F7 forward curve, LEAVE_MS).
+   The reduced-motion kill-switch makes this instant. */
+.auth-page.leaving {
+	transform: translateX(-102%);
+	transition: transform 240ms cubic-bezier(0, 0.8, 0.3, 1);
+}
+
 /* Border-box within auth only: width:100% + padding must stay inside the
    viewport (content-box would push the wrap/buttons 16-40px past the
    right edge, invisibly clipped by the shell). The shell predates any
@@ -429,6 +437,8 @@
 	gap: var(--sp-2);
 	align-items: flex-start;
 	margin: 0;
+	/* Tucked in from the CTA's rounded corner so the row reads aligned. */
+	margin-left: var(--sp-1);
 	font-size: var(--fs-small);
 	color: var(--warning);
 }

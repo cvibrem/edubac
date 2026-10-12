@@ -53,6 +53,12 @@ test('welcome collects answers and continues as guest', async ({ page }) => {
 		return el.scrollHeight / parseFloat(getComputedStyle(el).lineHeight);
 	});
 	expect(warnLines).toBeLessThanOrEqual(2);
+	// Tucked in from the CTA's rounded corner (reads aligned, not flush).
+	const warnMargin = await page.evaluate(() => {
+		const el = document.querySelector('.guest-warning') as HTMLElement;
+		return parseFloat(getComputedStyle(el).marginLeft);
+	});
+	expect(warnMargin).toBeGreaterThan(0);
 
 	// NS4 is preselected; switching proves the dropdown writes through.
 	await expect(page.locator('[data-testid="grade-select"]')).toHaveValue('ns4');
@@ -91,6 +97,8 @@ test('welcome collects answers and continues as guest', async ({ page }) => {
 	await expect(page.locator('.eyebrow')).toHaveText('Ann fè konesans dabò');
 
 	await page.locator('[data-testid="welcome-guest"]').click();
+	// Guest exit slides the page left before home replaces it.
+	await page.waitForSelector('.auth-page.leaving', { timeout: 5000 });
 	await expect(page).toHaveURL(/\/home$/);
 	await expect(page.locator('.bottom-nav')).toBeVisible();
 
@@ -156,6 +164,8 @@ test('account path keeps the draft, back returns, connect finishes', async ({ pa
 	await page.locator('[data-testid="login-password"]').fill('secret123');
 	await expect(page.locator('[data-testid="login-submit"]')).toBeEnabled();
 	await page.locator('[data-testid="login-submit"]').click();
+	// Connect exit slides the page left before home replaces it.
+	await page.waitForSelector('.auth-page.leaving', { timeout: 5000 });
 	await expect(page).toHaveURL(/\/home$/);
 
 	const profile = await page.evaluate(() => localStorage.getItem('edubac.profile'));
