@@ -33,6 +33,7 @@ public class MainActivity extends BridgeActivity {
         }
 
         applySystemBarIconAppearance();
+        disableWebViewAutoDarkening();
         splashScreen.setKeepOnScreenCondition(() -> keepSplashScreen);
         new Handler(Looper.getMainLooper()).postDelayed(() -> keepSplashScreen = false, 3000);
     }
@@ -55,5 +56,26 @@ public class MainActivity extends BridgeActivity {
 
     public void hideCustomSplash() {
         this.keepSplashScreen = false;
+    }
+
+    /**
+     * The site ships its own prefers-color-scheme CSS (tokens.css), so the
+     * WebView must never auto-darken pages itself: on a light system that
+     * inversion is exactly "dark UI even though the OS is light", and on a
+     * dark system it would double-darken our dark theme. Belt and braces
+     * with `android:forceDarkAllowed=false` in the themes.
+     */
+    private void disableWebViewAutoDarkening() {
+        try {
+            if (getBridge() == null || getBridge().getWebView() == null) return;
+            android.webkit.WebSettings settings = getBridge().getWebView().getSettings();
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                settings.setAlgorithmicDarkeningAllowed(false);
+            } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                settings.setForceDark(android.webkit.WebSettings.FORCE_DARK_OFF);
+            }
+        } catch (Exception e) {
+            android.util.Log.w("MainActivity", "Could not disable WebView auto-darkening", e);
+        }
     }
 }

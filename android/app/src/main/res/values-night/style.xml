@@ -13,6 +13,8 @@
         <item name="android:enforceStatusBarContrast" tools:targetApi="q">false</item>
         <item name="android:enforceNavigationBarContrast" tools:targetApi="q">false</item>
 
+        <!-- See values/styles.xml: our own CSS owns dark mode. -->
+        <item name="android:forceDarkAllowed">false</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="27">false</item>
     </style>
@@ -25,6 +27,8 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
+        <!-- See values/styles.xml: our own CSS owns dark mode. -->
+        <item name="android:forceDarkAllowed">false</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="27">false</item>
 

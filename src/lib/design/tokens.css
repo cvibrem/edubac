@@ -12,6 +12,8 @@
 :root {
 	--font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 
+	color-scheme: light dark;
+
 	/* App + surfaces */
 	--bg: #edf0f5;
 	--surface: #f8f9fb;
@@ -108,6 +110,7 @@
 
 /* Manual override wins over the media query (loaded later, same specificity). */
 .dark {
+	color-scheme: dark;
 	--bg: #0a0c11;
 	--surface: #11141b;
 	--surface-2: #1a1f29;
@@ -126,12 +129,17 @@
 	--success: #4ade80;
 	--warning: #fbbf24;
 	--error: #f87171;
+
+	--shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+	--shadow-2: 0 2px 8px rgba(0, 0, 0, 0.45);
+	--shadow-3: 0 8px 24px rgba(0, 0, 0, 0.5);
 }
 
 /* Manual light pin (theme choice): same source as :root, so picking
    "Clair" on a dark OS still renders light. Loaded after the media
    query, same specificity — wins exactly like `.dark` does. */
 .light {
+	color-scheme: light;
 	--bg: #edf0f5;
 	--surface: #f8f9fb;
 	--surface-2: #eff2f7;
@@ -150,4 +158,8 @@
 	--success: #15803d;
 	--warning: #b45309;
 	--error: #b3261e;
+
+	--shadow-1: 0 1px 2px rgba(15, 31, 61, 0.08);
+	--shadow-2: 0 2px 8px rgba(15, 31, 61, 0.1);
+	--shadow-3: 0 8px 24px rgba(15, 31, 61, 0.14);
 }

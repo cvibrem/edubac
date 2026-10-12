@@ -147,6 +147,13 @@
 			linear-gradient(to bottom, rgba(11, 30, 66, 0.55), transparent 26%),
 			linear-gradient(to bottom, transparent 42%, #0b1a36 78%);
 	}
+	/* Manual light pin beats the OS-dark media query above (same reason
+	   as tokens.css: later rule, higher specificity — explicit choice wins). */
+	:global(.light) .scrim {
+		background:
+			linear-gradient(to bottom, rgba(11, 30, 66, 0.5), transparent 26%),
+			linear-gradient(to bottom, transparent 42%, #1c4da3 78%);
+	}
 	.brand {
 		position: absolute;
 		top: 0;

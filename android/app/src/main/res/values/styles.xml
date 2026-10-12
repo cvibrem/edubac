@@ -13,6 +13,10 @@
         <item name="android:enforceStatusBarContrast" tools:targetApi="q">false</item>
         <item name="android:enforceNavigationBarContrast" tools:targetApi="q">false</item>
 
+        <!-- Never let the OS/WebView auto-invert our pages: the site ships
+             its own prefers-color-scheme CSS, auto-darkening would lie
+             about light mode and double-darken dark mode. -->
+        <item name="android:forceDarkAllowed">false</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
     </style>
@@ -27,6 +31,10 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
+        <!-- Never let the OS/WebView auto-invert our pages: the site ships
+             its own prefers-color-scheme CSS, auto-darkening would lie
+             about light mode and double-darken dark mode. -->
+        <item name="android:forceDarkAllowed">false</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
 
