@@ -22,18 +22,27 @@
 	// First mount never animates in: welcome is revealed by the onboarding
 	// exit (or the page cold-loads) — the push only plays between screens.
 	let entered = $state(false);
+	// Back-stack of auth paths: returning to the previous entry pops
+	// (slides right) instead of pushing left again.
+	let stack: string[] = [];
 
 	onMount(() => {
+		stack = [page.url.pathname];
 		entered = true;
 	});
 
 	onNavigate((navigation) => {
 		const to = navigation.to?.url.pathname;
 		const from = navigation.from?.url.pathname;
-		if (!to || !from) return;
-		const dTo = DEPTH.get(to) ?? 0;
-		const dFrom = DEPTH.get(from) ?? 0;
-		direction = dTo >= dFrom ? 1 : -1;
+		if (!to || !from || to === from) return;
+		if (!DEPTH.has(from) && !DEPTH.has(to)) return;
+		if (to === stack[stack.length - 2]) {
+			stack.pop();
+			direction = -1;
+			return;
+		}
+		direction = (DEPTH.get(to) ?? 0) >= (DEPTH.get(from) ?? 0) ? 1 : -1;
+		if (to !== stack[stack.length - 1]) stack.push(to);
 	});
 </script>
 

@@ -7,6 +7,7 @@
 	import { SUPPORTED_LOCALES, type LocaleCode } from '$lib/config/i18n';
 	import { getLocale, setLocale, t } from '$lib/i18n/index.svelte';
 	import { getTheme, setTheme } from '$lib/theme/mode.svelte';
+	import { dayPartKey } from '$lib/auth/greeting';
 	import { completeGuest, getDraft, getProfile, saveDraft, type Grade } from '$lib/profile/store';
 	import TermsFooter from '$lib/auth/TermsFooter.svelte';
 	import '$lib/auth/auth.css';
@@ -19,15 +20,8 @@
 	let nameInput: HTMLInputElement | undefined = $state();
 	let focused = $state(false);
 
-	// Day-part greeting from the device hour (06:00–17:59 → day).
-	const isDay = (() => {
-		try {
-			const h = new Date().getHours();
-			return h >= 6 && h < 18;
-		} catch {
-			return true;
-		}
-	})();
+	// Day-part greeting from the device hour (see lib/auth/greeting).
+	const dayKey = dayPartKey();
 	const knownName = $derived(name.trim());
 	// The header caret blinks whenever typing is live (focused) or invited
 	// (empty) — it rests only once the field is left holding a name.
@@ -199,7 +193,7 @@
 			<header class="auth-head">
 				<p class="eyebrow">{t('welcome.subtitle')}</p>
 				<h1>
-					<span class="hi-day">{t(isDay ? 'welcome.day' : 'welcome.evening')}</span>
+					<span class="hi-day">{t(dayKey)}</span>
 					<span class="hi-who" class:unknown={!knownName} aria-live="polite"
 						>{knownName ? `${knownName} !` : t('welcome.stranger')}{#if caretVisible}<span
 								class="caret"
