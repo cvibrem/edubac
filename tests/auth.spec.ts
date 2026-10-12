@@ -24,6 +24,14 @@ test('welcome collects answers and continues as guest', async ({ page }) => {
 	await expect(page.locator('.hi-day')).toHaveText(dayGreeting);
 	await expect(page.locator('.hi-who')).toHaveText("L'inconnu !");
 
+	// Greeting lines share one size: the name slot is a reset button and
+	// its reset must never outrank the display clamp.
+	const hiSizes = await page.evaluate(() => [
+		getComputedStyle(document.querySelector('.hi-day') as HTMLElement).fontSize,
+		getComputedStyle(document.querySelector('.hi-who') as HTMLElement).fontSize
+	]);
+	expect(hiSizes[0]).toBe(hiSizes[1]);
+
 	// Desktop arrival lands focused (no keyboard to pop); the caret blinks
 	// while empty, focused or not — it rests only on blur-with-text.
 	expect(

@@ -302,7 +302,11 @@ button.hi-who {
 	background: none;
 	border: none;
 	padding: 0;
-	font: inherit;
+	/* Only family + weight: size/line-height must fall through to the
+	   .hi-who rule below the cascade (`font: inherit` would outrank it
+	   and shrink the greeting to the h1 size). */
+	font-family: inherit;
+	font-weight: inherit;
 	color: inherit;
 	text-align: start;
 	cursor: pointer;
