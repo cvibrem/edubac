@@ -66,6 +66,11 @@
 	padding: var(--sp-4) 0;
 }
 
+/* The core breathes a touch more before the CTAs. */
+.auth-wrap.balance .auth-ctas {
+	margin-top: var(--sp-2);
+}
+
 .topbar-spacer {
 	flex: 1;
 }
@@ -340,7 +345,8 @@
 	padding: 0 var(--sp-4);
 	border-radius: var(--r-lg);
 	background: var(--surface);
-	border: 1px solid var(--line);
+	/* 2px: a 1px hairline shimmers on the large corner radius. */
+	border: 2px solid var(--line);
 	color: var(--ink-3);
 }
 
