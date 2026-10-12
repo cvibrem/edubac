@@ -33,6 +33,11 @@ test('welcome collects answers and continues as guest', async ({ page }) => {
 	await page.locator('.hi-day').click();
 	await expect(page.locator('.caret')).toBeVisible();
 
+	// "L'inconnu" reads editable — it is a shortcut that drops focus into
+	// the name field.
+	await page.locator('[data-testid="welcome-name-shortcut"]').click();
+	await expect(page.locator('[data-testid="welcome-name"]')).toBeFocused();
+
 	// CTAs are always enabled: tapping with an empty name shows the error
 	// instead of swallowing the press.
 	await page.locator('[data-testid="welcome-guest"]').click();
@@ -63,6 +68,19 @@ test('welcome collects answers and continues as guest', async ({ page }) => {
 	// NS4 is preselected; switching proves the dropdown writes through.
 	await expect(page.locator('[data-testid="grade-select"]')).toHaveValue('ns4');
 	await page.locator('[data-testid="grade-select"]').selectOption('ns4');
+
+	// Autofill guard: the stylesheet pins the browser's autofill wash back
+	// to the surface token so saved credentials never flash yellow.
+	const hasAutofillGuard = await page.evaluate(() =>
+		[...document.styleSheets].some((ss) => {
+			try {
+				return [...ss.cssRules].some((r) => r.cssText.includes('-webkit-autofill'));
+			} catch {
+				return false;
+			}
+		})
+	);
+	expect(hasAutofillGuard).toBe(true);
 
 	// Separator reads "ou" and both CTAs share one height.
 	await expect(page.locator('.auth-ctas .or-row')).toHaveText('ou');

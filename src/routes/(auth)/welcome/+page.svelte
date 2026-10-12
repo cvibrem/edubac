@@ -208,12 +208,23 @@
 				<p class="eyebrow">{t('welcome.subtitle')}</p>
 				<h1>
 					<span class="hi-day">{t(dayKey)}</span>
-					<span class="hi-who" class:unknown={!knownName} aria-live="polite"
-						>{knownName ? `${knownName} !` : t('welcome.stranger')}{#if caretVisible}<span
-								class="caret"
-								aria-hidden="true"
-							></span>{/if}</span
+					<!-- The name slot reads editable (text cursor) — it is a
+					     shortcut that drops focus into the field below. -->
+					<button
+						type="button"
+						class="hi-who"
+						class:unknown={!knownName}
+						data-testid="welcome-name-shortcut"
+						aria-label={t('welcome.nameLabel')}
+						onclick={() => nameInput?.focus()}
 					>
+						<span aria-live="polite"
+							>{knownName ? `${knownName} !` : t('welcome.stranger')}{#if caretVisible}<span
+									class="caret"
+									aria-hidden="true"
+								></span>{/if}</span
+						>
+					</button>
 				</h1>
 			</header>
 

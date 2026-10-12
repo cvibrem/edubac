@@ -295,6 +295,19 @@
 	white-space: nowrap;
 }
 
+/* The name slot is a shortcut to the field below: a real button (full
+   keyboard support) reset to read as display type, pointer on hover so
+   the text never pretends to be editable in place. */
+button.hi-who {
+	background: none;
+	border: none;
+	padding: 0;
+	font: inherit;
+	color: inherit;
+	text-align: start;
+	cursor: pointer;
+}
+
 .hi-who.unknown {
 	color: var(--ink-3);
 }
@@ -379,6 +392,26 @@
 
 .input input:focus {
 	outline: none;
+}
+
+/* Autofill wash: Chrome/Safari paint saved credentials with their own
+   (pale yellow) background that clashes with the surface fill — pin it
+   back to our tokens so the field never flashes, in either theme. */
+.input input:-webkit-autofill,
+.input input:-webkit-autofill:hover,
+.input input:-webkit-autofill:focus,
+.input input:-webkit-autofill:active {
+	-webkit-text-fill-color: var(--ink);
+	-webkit-box-shadow: 0 0 0 10rem var(--surface) inset;
+	caret-color: var(--ink);
+	transition: background-color 600000s ease-in-out 0s;
+}
+
+/* Firefox's standard hook for the same wash. */
+.input input:autofill {
+	color: var(--ink);
+	background-color: var(--surface);
+	box-shadow: 0 0 0 10rem var(--surface) inset;
 }
 
 .input svg {
