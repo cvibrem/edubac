@@ -210,7 +210,11 @@ test('login social buttons are placeholders', async ({ page }) => {
 	await page.goto('/login', { waitUntil: 'networkidle' });
 	await page.waitForSelector('.splash', { state: 'detached', timeout: 15000 }).catch(() => {});
 
-	// Social logins are UI-only v1: a toast, no navigation.
+	// Social logins are UI-only v1: a toast, no navigation. Brand marks
+	// are the dropped SVGs, inlined (no more text glyphs).
+	await expect(page.locator('[data-testid="social-google"] svg')).toHaveCount(1);
+	await expect(page.locator('[data-testid="social-facebook"] svg')).toHaveCount(1);
+	await expect(page.locator('[data-testid="social-tiktok"] svg')).toHaveCount(1);
 	await page.locator('[data-testid="social-google"]').click();
 	await expect(page.locator('.toast')).toBeVisible({ timeout: 5000 });
 	await expect(page).toHaveURL(/\/login$/);

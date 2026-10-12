@@ -535,14 +535,6 @@ button.hi-who {
 	height: 1.5rem;
 }
 
-.social-g {
-	color: #4285f4;
-}
-
-.social-f {
-	color: #1877f2;
-}
-
 /* Pinned near the bottom: the wrap grows, terms take the leftover.
    Slightly inset (90%) so the small print doesn't span edge to edge. */
 .terms {
