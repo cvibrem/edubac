@@ -45,6 +45,32 @@
 	margin-bottom: var(--sp-5);
 }
 
+/* Vertical-balance experiment (welcome): the core group (greeting +
+   inputs + CTAs) centers in the free space between the top bar and the
+   pinned terms, instead of stacking from the top and stranding a void
+   above the footer on tall screens. */
+.auth-wrap.balance {
+	gap: 0;
+}
+
+.auth-wrap.balance .auth-topbar {
+	margin-bottom: 0;
+}
+
+.auth-core {
+	flex: 1 0 auto;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: var(--sp-5);
+	padding: var(--sp-4) 0;
+}
+
+/* The core breathes a touch more before the CTAs. */
+.auth-wrap.balance .auth-ctas {
+	margin-top: var(--sp-2);
+}
+
 .topbar-spacer {
 	flex: 1;
 }
@@ -319,7 +345,8 @@
 	padding: 0 var(--sp-4);
 	border-radius: var(--r-lg);
 	background: var(--surface);
-	border: 1px solid var(--line);
+	/* 2px: a 1px hairline shimmers on the large corner radius. */
+	border: 2px solid var(--line);
 	color: var(--ink-3);
 }
 
@@ -381,8 +408,9 @@
 	gap: var(--sp-3);
 }
 
-/* Tall CTA, same presence as the onboarding button. */
-.auth-cta {
+/* Tall CTA, same presence as the onboarding button.
+   Specificity beats global .btn (pill) regardless of bundle order. */
+.auth-page .btn.auth-cta {
 	min-height: 3.75rem;
 	font-size: var(--fs-h3);
 	border-radius: var(--r-lg);

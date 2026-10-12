@@ -7,6 +7,7 @@
 	import { SUPPORTED_LOCALES, type LocaleCode } from '$lib/config/i18n';
 	import { getLocale, setLocale, t } from '$lib/i18n/index.svelte';
 	import { getTheme, setTheme } from '$lib/theme/mode.svelte';
+	import { dayPartKey } from '$lib/auth/greeting';
 	import { completeGuest, getDraft, getProfile, saveDraft, type Grade } from '$lib/profile/store';
 	import TermsFooter from '$lib/auth/TermsFooter.svelte';
 	import '$lib/auth/auth.css';
@@ -19,15 +20,8 @@
 	let nameInput: HTMLInputElement | undefined = $state();
 	let focused = $state(false);
 
-	// Day-part greeting from the device hour (06:00–17:59 → day).
-	const isDay = (() => {
-		try {
-			const h = new Date().getHours();
-			return h >= 6 && h < 18;
-		} catch {
-			return true;
-		}
-	})();
+	// Day-part greeting from the device hour (see lib/auth/greeting).
+	const dayKey = dayPartKey();
 	const knownName = $derived(name.trim());
 	// The header caret blinks whenever typing is live (focused) or invited
 	// (empty) — it rests only once the field is left holding a name.
@@ -107,7 +101,7 @@
 <svelte:window onkeydown={onWindowKey} />
 
 <main class="auth-page">
-	<div class="auth-wrap">
+	<div class="auth-wrap balance">
 		<div class="auth-topbar">
 			<span class="topbar-spacer"></span>
 			<div class="lang-wrap">
@@ -195,96 +189,98 @@
 			</div>
 		</div>
 
-		<header class="auth-head">
-			<p class="eyebrow">{t('welcome.subtitle')}</p>
-			<h1>
-				<span class="hi-day">{t(isDay ? 'welcome.day' : 'welcome.evening')}</span>
-				<span class="hi-who" class:unknown={!knownName} aria-live="polite"
-					>{knownName ? `${knownName} !` : t('welcome.stranger')}{#if caretVisible}<span
-							class="caret"
-							aria-hidden="true"
-						></span>{/if}</span
-				>
-			</h1>
-		</header>
+		<div class="auth-core">
+			<header class="auth-head">
+				<p class="eyebrow">{t('welcome.subtitle')}</p>
+				<h1>
+					<span class="hi-day">{t(dayKey)}</span>
+					<span class="hi-who" class:unknown={!knownName} aria-live="polite"
+						>{knownName ? `${knownName} !` : t('welcome.stranger')}{#if caretVisible}<span
+								class="caret"
+								aria-hidden="true"
+							></span>{/if}</span
+					>
+				</h1>
+			</header>
 
-		<div class="field">
-			<div class="input">
-				<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-					<path
-						d="M12 6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0 10c2.7 0 5.8 1.29 6 2H6c.23-.72 3.31-2 6-2m0-12C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 10c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+			<div class="field">
+				<div class="input">
+					<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+						<path
+							d="M12 6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0 10c2.7 0 5.8 1.29 6 2H6c.23-.72 3.31-2 6-2m0-12C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 10c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+						/>
+					</svg>
+					<input
+						id="welcome-name"
+						data-testid="welcome-name"
+						type="text"
+						autocomplete="given-name"
+						maxlength={40}
+						aria-label={t('welcome.nameLabel')}
+						placeholder={t('welcome.namePlaceholder')}
+						aria-invalid={nameError}
+						aria-describedby={nameError ? 'welcome-name-error' : undefined}
+						bind:this={nameInput}
+						bind:value={name}
+						oninput={() => (nameError = false)}
+						onfocus={() => (focused = true)}
+						onblur={() => (focused = false)}
 					/>
-				</svg>
-				<input
-					id="welcome-name"
-					data-testid="welcome-name"
-					type="text"
-					autocomplete="given-name"
-					maxlength={40}
-					aria-label={t('welcome.nameLabel')}
-					placeholder={t('welcome.namePlaceholder')}
-					aria-invalid={nameError}
-					aria-describedby={nameError ? 'welcome-name-error' : undefined}
-					bind:this={nameInput}
-					bind:value={name}
-					oninput={() => (nameError = false)}
-					onfocus={() => (focused = true)}
-					onblur={() => (focused = false)}
-				/>
+				</div>
+				{#if nameError}
+					<p class="field-error" id="welcome-name-error" role="alert">
+						{t('welcome.nameRequired')}
+					</p>
+				{/if}
 			</div>
-			{#if nameError}
-				<p class="field-error" id="welcome-name-error" role="alert">
-					{t('welcome.nameRequired')}
+
+			<div class="field grade-field">
+				<div class="input select-wrap">
+					<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+						<path
+							d="M12 3 1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"
+						/>
+					</svg>
+					<select
+						id="grade-select"
+						data-testid="grade-select"
+						aria-label={t('welcome.gradeLabel')}
+						bind:value={grade}
+					>
+						<option value="ns4">{t('welcome.gradeNs')}</option>
+						<option value="9eme">{t('welcome.grade9')}</option>
+					</select>
+					<svg class="chev" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+						<path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6-1.41-1.41z" />
+					</svg>
+				</div>
+			</div>
+
+			<div class="auth-ctas">
+				<button
+					type="button"
+					class="btn btn-primary btn-block auth-cta ripple"
+					data-testid="welcome-account"
+					onclick={goAccount}
+				>
+					{t('welcome.account')}
+				</button>
+				<div class="or-row" role="separator"><span>{t('login.or')}</span></div>
+				<button
+					type="button"
+					class="btn btn-outline btn-block auth-cta ripple"
+					data-testid="welcome-guest"
+					onclick={goGuest}
+				>
+					{t('welcome.guest')}
+				</button>
+				<p class="guest-warning" role="note">
+					<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+						<path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
+					</svg>
+					<span>{t('welcome.guestWarning')}</span>
 				</p>
-			{/if}
-		</div>
-
-		<div class="field grade-field">
-			<div class="input select-wrap">
-				<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-					<path
-						d="M12 3 1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"
-					/>
-				</svg>
-				<select
-					id="grade-select"
-					data-testid="grade-select"
-					aria-label={t('welcome.gradeLabel')}
-					bind:value={grade}
-				>
-					<option value="ns4">{t('welcome.gradeNs')}</option>
-					<option value="9eme">{t('welcome.grade9')}</option>
-				</select>
-				<svg class="chev" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-					<path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6-1.41-1.41z" />
-				</svg>
 			</div>
-		</div>
-
-		<div class="auth-ctas">
-			<button
-				type="button"
-				class="btn btn-primary btn-block auth-cta ripple"
-				data-testid="welcome-account"
-				onclick={goAccount}
-			>
-				{t('welcome.account')}
-			</button>
-			<div class="or-row" role="separator"><span>{t('login.or')}</span></div>
-			<button
-				type="button"
-				class="btn btn-outline btn-block auth-cta ripple"
-				data-testid="welcome-guest"
-				onclick={goGuest}
-			>
-				{t('welcome.guest')}
-			</button>
-			<p class="guest-warning" role="note">
-				<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-					<path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
-				</svg>
-				<span>{t('welcome.guestWarning')}</span>
-			</p>
 		</div>
 
 		<TermsFooter />
