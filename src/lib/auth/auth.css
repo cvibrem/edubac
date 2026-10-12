@@ -408,8 +408,9 @@
 	gap: var(--sp-3);
 }
 
-/* Tall CTA, same presence as the onboarding button. */
-.auth-cta {
+/* Tall CTA, same presence as the onboarding button.
+   Specificity beats global .btn (pill) regardless of bundle order. */
+.auth-page .btn.auth-cta {
 	min-height: 3.75rem;
 	font-size: var(--fs-h3);
 	border-radius: var(--r-lg);
